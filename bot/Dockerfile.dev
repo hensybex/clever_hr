@@ -1,0 +1,23 @@
+# Dockerfile.dev for Telegram Bot (Development environment)
+
+# Base image for Python
+FROM python:3.10-slim
+
+# Set working directory inside the container
+WORKDIR /app
+
+# Install bash and other development tools
+RUN apt-get update && apt-get install -y bash
+
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the source code
+COPY . .
+
+# Expose the port (if needed) - optional
+EXPOSE 8000
+
+# Command to run the bot in development mode
+CMD ["python", "main.py"]
