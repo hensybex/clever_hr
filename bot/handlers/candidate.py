@@ -1,6 +1,7 @@
 # handlers/candidate.py
 
 import asyncio
+import json
 from aiogram import types, Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -162,20 +163,36 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
     reply_message = await message.reply("Ответ:\n")
 
     full_response = ""
-    last_update_time = asyncio.get_event_loop().time()  # To manage periodic updates
+    last_update_time = asyncio.get_event_loop().time()
 
     async def on_message_callback(response_chunk):
         nonlocal full_response, last_update_time
-        full_response += response_chunk  # Accumulate response chunks
+        try:
+            # Parse the JSON response chunk
+            response = json.loads(response_chunk)
+            
+            # Handle 'status' messages (e.g., "Processing started", "Completed")
+            if 'status' in response:
+                if response['status'] == "Processing started":
+                    full_response += "Процесс начат...\n"
+                elif response['status'] == "Completed":
+                    full_response += "\nПроцесс завершен."
+            
+            # Handle 'result' chunks and accumulate them
+            if 'result' in response:
+                full_response += response['result']
 
-        # Update the message every 2 seconds
-        current_time = asyncio.get_event_loop().time()
-        if current_time - last_update_time >= 2:
-            try:
-                await reply_message.edit_text(f"Ответ:\n{full_response}")
-                last_update_time = current_time  # Update the last update time
-            except aiogram.utils.exceptions.MessageNotModified:
-                pass  # Ignore if message content hasn't changed
+            # Update the message every 2 seconds
+            current_time = asyncio.get_event_loop().time()
+            if current_time - last_update_time >= 2:
+                try:
+                    await reply_message.edit_text(f"Ответ:\n{full_response}")
+                    last_update_time = current_time  # Update the last update time
+                except aiogram.utils.exceptions.MessageNotModified:
+                    pass  # Ignore if message content hasn't changed
+
+        except json.JSONDecodeError:
+            pass  # If the chunk isn't a valid JSON, we skip it
 
     # Start the WebSocket interaction and message handling
     await api_client.analyze_interview_message_websocket(interview_id, user_message, on_message_callback)
@@ -186,6 +203,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             await reply_message.edit_text(f"Ответ:\n{full_response}")
         except aiogram.utils.exceptions.MessageNotModified:
             pass
+
 
 
 # Stop the interview
