@@ -16,7 +16,7 @@ import (
 )
 
 type InterviewUsecase interface {
-	CreateInterview(interview *model.Interview) error
+	CreateInterview(interviewDTO dtos.CreateInterviewDTO) error
 	AnalyseInterviewMessageWebsocket(clientMsg dtos.ClientMessage, conn *websocket.Conn)
 	RunFullInterviewAnalysis(interviewID uint) (*model.InterviewAnalysisResult, error)
 	GetInterviewAnalysisResult(interviewID uint) (*model.InterviewAnalysisResult, error)
@@ -27,6 +27,7 @@ type interviewUsecase struct {
 	interviewTypeRepo repository.InterviewTypeRepository
 	messageRepo       repository.InterviewMessageRepository
 	analysisRepo      repository.InterviewAnalysisResultRepository
+	resumeRepo        repository.ResumeRepository
 	mistralService    service.MistralService
 }
 
@@ -35,15 +36,42 @@ func NewInterviewUsecase(
 	interviewTypeRepo repository.InterviewTypeRepository,
 	messageRepo repository.InterviewMessageRepository,
 	analysisRepo repository.InterviewAnalysisResultRepository,
+	resumeRepo repository.ResumeRepository,
 	mistralService service.MistralService,
 ) InterviewUsecase {
 	return &interviewUsecase{
-		interviewRepo, interviewTypeRepo, messageRepo, analysisRepo, mistralService,
+		interviewRepo, interviewTypeRepo, messageRepo, analysisRepo, resumeRepo, mistralService,
 	}
 }
 
-func (u *interviewUsecase) CreateInterview(interview *model.Interview) error {
+/* func (u *interviewUsecase) CreateInterview(interview *model.Interview) error {
 	return u.interviewRepo.CreateInterview(interview)
+}
+*/
+
+func (u *interviewUsecase) CreateInterview(interviewDTO dtos.CreateInterviewDTO) error {
+	/* // Check if the user has uploaded a resume based on tg_id
+	resume, err := u.resumeRepo.GetResumeByID(interviewDTO.ResumeID)
+	if err != nil {
+		return err
+	}
+	if resume == nil {
+		// No resume found, return a custom error
+		return errors.New("no resume found")
+	}
+
+	// If a resume exists, set the ResumeID in the DTO
+	interviewDTO.ResumeID = resume.ID */
+
+	// Convert the DTO to the Interview model
+	interview := interviewDTO.ToInterviewModel()
+
+	// Create the interview using the repository
+	if err := u.interviewRepo.CreateInterview(&interview); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (u *interviewUsecase) AnalyseInterviewMessageWebsocket(clientMsg dtos.ClientMessage, conn *websocket.Conn) {

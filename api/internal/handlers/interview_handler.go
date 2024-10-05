@@ -4,6 +4,7 @@ package handlers
 
 import (
 	"bytes"
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -45,27 +46,31 @@ func (h *InterviewHandler) CreateInterview(c *gin.Context) {
 	// Reset the body for ShouldBindJSON to read it again
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
 
-	// Bind the JSON input to interviewDTO
+	// Bind the JSON input to interviewDTO (without ResumeID for now)
 	if err := c.ShouldBindJSON(&interviewDTO); err != nil {
 		log.Printf("Error binding JSON: %v", err) // Log JSON binding error
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Convert DTO to Interview model
-	interview := interviewDTO.ToInterviewModel()
-
-	// Log the interview object to be created
-	log.Printf("Interview Object: %+v", interview)
-
-	// Attempt to create the interview using the use case
-	if err := h.interviewUsecase.CreateInterview(&interview); err != nil {
-		log.Printf("Error creating interview: %v", err) // Log any error from the use case
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// Pass to the usecase to handle the business logic
+	err = h.interviewUsecase.CreateInterview(interviewDTO)
+	if err != nil {
+		if err == errors.New("no resume found") {
+			// Custom error indicating no resume was found
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error":   "Resume not found",
+				"message": "Пожалуйста, загрузите резюме, прежде чем начинать собеседование.",
+			})
+		} else {
+			// Handle internal server errors
+			log.Printf("Error creating interview: %v", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occurred while creating the interview"})
+		}
 		return
 	}
 
-	// If successful, log the success and return the response
+	// Success response
 	log.Println("Interview created successfully")
 	c.JSON(http.StatusCreated, gin.H{"success": true, "message": "Interview created successfully"})
 }

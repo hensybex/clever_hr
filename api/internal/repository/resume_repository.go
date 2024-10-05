@@ -10,6 +10,7 @@ import (
 type ResumeRepository interface {
 	CreateResume(resume *model.Resume) error
 	GetResumeByID(id uint) (*model.Resume, error)
+	GetResumeByTgID(tgID uint) (*model.Resume, error)
 	GetResumeByCandidateID(candidateID uint) (*model.Resume, error)
 }
 
@@ -28,6 +29,15 @@ func (r *resumeRepository) CreateResume(resume *model.Resume) error {
 func (r *resumeRepository) GetResumeByID(id uint) (*model.Resume, error) {
 	var resume model.Resume
 	err := r.db.First(&resume, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &resume, nil
+}
+
+func (r *resumeRepository) GetResumeByTgID(tgID uint) (*model.Resume, error) {
+	var resume model.Resume
+	err := r.db.Where("candidate_id = ?", tgID).First(&resume).Error
 	if err != nil {
 		return nil, err
 	}
