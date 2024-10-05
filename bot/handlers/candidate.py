@@ -163,7 +163,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
     # Send the initial reply message to Telegram and store its message object
     reply_message = await message.reply("")
 
-    full_response = ""
+    full_response = " "
     last_update_time = asyncio.get_event_loop().time()
 
     async def on_message_callback(response_chunk):
@@ -177,7 +177,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
                 if response['status'] == "Processing started":
                     full_response += ""
                 elif response['status'] == "Completed":
-                    full_response += " "
+                    full_response += ""
             
             # Handle 'result' chunks and accumulate them
             if 'result' in response:
