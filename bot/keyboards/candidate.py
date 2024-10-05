@@ -26,9 +26,10 @@ def candidate_profile_keyboard():
     return keyboard
 
 def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyboardMarkup:
-    keyboard = InlineKeyboardMarkup()
-    for interview_type in interview_types[:10]:  # Limiting to 10 per page
-        keyboard.add(
+    keyboard_builder = InlineKeyboardBuilder()
+
+    for interview_type in interview_types[:10]:
+        keyboard_builder.add(
             InlineKeyboardButton(text=interview_type['name'], callback_data=f"candidate_interview_type_{interview_type['id']}")
         )
     
@@ -39,14 +40,18 @@ def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyb
             pagination_buttons.append(InlineKeyboardButton(text="⬅️ Назад", callback_data=f"before_interview_page_{page-1}"))
         if len(interview_types) > page * 10:
             pagination_buttons.append(InlineKeyboardButton(text="Вперёд ➡️", callback_data=f"before_interview_page_{page+1}"))
-        if pagination_buttons:
-            keyboard.add(*pagination_buttons)
     
-    # Back Button
-    keyboard.add(
-        InlineKeyboardButton(text="Назад", callback_data="candidate_main_menu")
+    if pagination_buttons:
+        keyboard_builder.row(*pagination_buttons)
+    
+    # Back button
+    keyboard_builder.add(
+        InlineKeyboardButton(text="Назад", callback_data="employee_main_menu")
     )
-    return keyboard
+
+    keyboard_builder.adjust(1)
+    
+    return keyboard_builder.as_markup()
 
 def interview_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[

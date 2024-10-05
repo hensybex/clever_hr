@@ -26,8 +26,6 @@ def employee_candidates_list_keyboard(candidates: list, page: int = 1) -> Inline
     
     # Add candidate buttons (limit to 10 per page)
     for candidate in candidates[:10]:
-        # Log the individual candidate
-        logging.info(f"Candidate: {candidate}")
         
         # Use capitalized keys for accessing candidate information
         candidate_name = candidate.get('Name', 'Имя не указано')
