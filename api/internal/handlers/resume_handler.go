@@ -103,51 +103,70 @@ func (h *ResumeHandler) EmployeeUploadResume(c *gin.Context) {
 }
 
 func (h *ResumeHandler) CandidateUploadResume(c *gin.Context) {
+	// Log the start of the function
+	log.Println("Start handling CandidateUploadResume")
+
 	// Retrieve the candidate's Telegram ID from the form data
 	telegramIDStr := c.PostForm("tg_id")
+	log.Printf("Received Telegram ID: %s", telegramIDStr)
 	if telegramIDStr == "" {
+		log.Println("Telegram ID is missing")
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Telegram ID is required"})
 		return
 	}
 
-	// Convert the Telegram ID to a string and retrieve the candidate by their Telegram ID
+	// Retrieve the candidate by their Telegram ID
+	log.Printf("Fetching user by Telegram ID: %s", telegramIDStr)
 	user, err := h.userUsecase.GetUserByTgID(telegramIDStr)
 	if err != nil {
+		log.Printf("Error fetching user by Telegram ID %s: %v", telegramIDStr, err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
 		return
 	}
+	log.Printf("Found user with ID: %d", user.ID)
 
 	// Retrieve the uploaded resume file
 	file, err := c.FormFile("resume")
 	if err != nil {
+		log.Println("Error retrieving resume file:", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Resume file is required"})
 		return
 	}
+	log.Printf("Received resume file: %s", file.Filename)
 
-	// Save the file locally (e.g., in the /tmp directory)
-	// Generate a unique file name using UUID and get the file extension
+	// Generate a unique file name for the uploaded resume
 	ext := filepath.Ext(file.Filename)
 	uniqueFileName := uuid.New().String() + ext
 	log.Printf("Generated unique file name: %s", uniqueFileName)
+
+	// Define the file path to save the resume
 	filePath := "/app/uploads/" + uniqueFileName
+	log.Printf("Saving resume to path: %s", filePath)
 	if err := c.SaveUploadedFile(file, filePath); err != nil {
+		log.Printf("Error saving resume file to %s: %v", filePath, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save resume file"})
 		return
 	}
+	log.Println("Resume file saved successfully")
 
 	// Prepare the resume object to be saved
 	resume := &model.Resume{
-		CandidateID: user.ID, // Use the candidate's ID from the user object
-		ResumePDF:   file.Filename,
+		CandidateID: user.ID,        // Use the candidate's ID from the user object
+		ResumePDF:   uniqueFileName, // Store the unique file name
 	}
+	log.Printf("Prepared resume object for user ID %d", user.ID)
 
 	// Call the usecase to process and save the resume
+	log.Println("Calling resumeUsecase to process and save the resume")
 	if err := h.resumeUsecase.CandidateUploadResume(resume, filePath); err != nil {
+		log.Printf("Error processing resume for user ID %d: %v", user.ID, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process resume"})
 		return
 	}
+	log.Println("Resume processed and saved successfully")
 
 	// Success case
+	log.Println("Resume uploaded successfully")
 	c.JSON(http.StatusOK, gin.H{"success": true, "message": "Resume uploaded successfully"})
 }
 
