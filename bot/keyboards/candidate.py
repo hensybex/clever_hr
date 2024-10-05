@@ -1,6 +1,8 @@
 # keyboards/candidate.py
 
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+import logging
 
 def candidate_main_menu_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
