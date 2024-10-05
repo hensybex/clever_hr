@@ -28,7 +28,7 @@ def candidate_profile_keyboard():
 def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
 
-    logging.info(f"Interview types: {interview_type}")
+    logging.info(f"Interview types: {interview_types}")
 
     for interview_type in interview_types[:10]:
         keyboard_builder.add(

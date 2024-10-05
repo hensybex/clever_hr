@@ -22,14 +22,23 @@ router = Router()
 class InterviewState(StatesGroup):
     in_progress = State()
 
+import logging
+
 # Register candidate
 @router.message(Command(commands=['candidate']))
-async def cmd_register_candidate(message: types.Message):
-    response = await api_client.create_user(tg_id=message.from_user.id, user_type='candidate')
-    await message.answer(
+async def cmd_register_candidate(callback_query: types.CallbackQuery):
+    user_id = callback_query.from_user.id  # Ensure we are using the user's TG ID from the callback query
+    
+    logging.info(f"Registering user with TG ID: {user_id} as employee.")
+    
+    response = await api_client.create_user(tg_id=user_id, user_type='candidate')
+    logging.info(f"API Response for user registration: {response}")
+    
+    await callback_query.message.answer(
         "Вы успешно зарегистрировались как кандидат." if response.get('success') else "Вы уже зарегистрированы.",
-        reply_markup=candidate_main_menu_keyboard()
+        reply_markup=employee_main_menu_keyboard()
     )
+
 
 # Handle inline buttons for candidate main menu
 @router.callback_query(F.data == 'candidate_main_menu')
