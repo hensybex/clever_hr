@@ -94,7 +94,7 @@ func (u *candidateUsecase) GetCandidateInfoByTgID(tgID string) (*dtos.CandidateI
 		return nil, fmt.Errorf("error fetching user: %v", err)
 	}
 	// Fetch candidate details
-	candidate, err := u.candidateRepo.GetCandidateByID(user.ID)
+	candidate, err := u.candidateRepo.GetCandidateByUploadedID(user.ID)
 	if err != nil {
 		log.Printf("ERROR: Error fetching candidate with TG ID: %s. Error: %v", tgID, err)
 		return nil, fmt.Errorf("error fetching candidate: %v", err)

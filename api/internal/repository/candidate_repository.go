@@ -10,6 +10,7 @@ import (
 type CandidateRepository interface {
 	CreateCandidate(candidate *model.Candidate) error
 	GetCandidateByID(id uint) (*model.Candidate, error)
+	GetCandidateByUploadedID(id uint) (*model.Candidate, error)
 }
 
 type candidateRepository struct {
@@ -27,6 +28,15 @@ func (r *candidateRepository) CreateCandidate(candidate *model.Candidate) error 
 func (r *candidateRepository) GetCandidateByID(id uint) (*model.Candidate, error) {
 	var candidate model.Candidate
 	err := r.db.First(&candidate, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &candidate, nil
+}
+
+func (r *candidateRepository) GetCandidateByUploadedID(id uint) (*model.Candidate, error) {
+	var candidate model.Candidate
+	err := r.db.Where("uploaded_by_user_id = ?", id).Find(&candidate).Error
 	if err != nil {
 		return nil, err
 	}
