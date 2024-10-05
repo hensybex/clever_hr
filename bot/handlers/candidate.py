@@ -101,12 +101,14 @@ async def candidate_start_interview(callback_query: types.CallbackQuery):
 async def start_interview(callback_query: types.CallbackQuery, state: FSMContext):
     interview_type_id = int(callback_query.data.split('_')[-1])
     response = await api_client.create_interview_for_candidate(callback_query.from_user.id, interview_type_id)
+    logging.info("!!!!!!HERE!!!!!!")
+    logging.info(response)
     if response.get('success'):
         await state.set_state(InterviewState.in_progress)
         await state.update_data(interview_id=response['interview_id'])
         await callback_query.message.edit_text("Интервью начато. Вы можете отправлять сообщения.", reply_markup=interview_keyboard())
     else:
-        await callback_query.message.edit_text("Ошибка при создании интервью.", reply_markup=candidate_main_menu_keyboard())
+        await callback_query.message.edit_text("Перед началом интервью, загрузите резюме и отправьте его на анализ.", reply_markup=candidate_main_menu_keyboard())
 
 # Handle messages during the interview
 @router.message(InterviewState.in_progress)
