@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"clever_hr_api/internal/dtos"
-	"clever_hr_api/internal/model"
 	"clever_hr_api/internal/usecase"
 
 	"github.com/gin-gonic/gin"
