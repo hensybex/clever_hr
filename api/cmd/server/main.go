@@ -4,6 +4,7 @@ package main
 
 import (
 	"clever_hr_api/internal/config"
+	"clever_hr_api/internal/migration"
 	"clever_hr_api/internal/model"
 	"clever_hr_api/internal/router"
 	"log"
@@ -36,6 +37,11 @@ func main() {
 		&model.InterviewAnalysisResult{},
 	); err != nil {
 		log.Fatalf("Failed to automigrate: %v", err)
+	}
+
+	err = migration.ApplyCustomMigrations(db)
+	if err != nil {
+		log.Fatalf("Failed to apply custom migration : %v", err)
 	}
 
 	// Setup router
