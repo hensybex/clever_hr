@@ -161,7 +161,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
 
     # Send the initial reply message to Telegram and store its message object
     #reply_message = await message.reply("")
-    reply_started = false
+    reply_started = False
 
     full_response = ""
     last_update_time = asyncio.get_event_loop().time()
