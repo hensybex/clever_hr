@@ -86,7 +86,7 @@ func (u *candidateUsecase) GetCandidateInfo(candidateID uint) (*dtos.CandidateIn
 }
 
 func (u *candidateUsecase) GetCandidateInfoByTgID(tgID string) (*dtos.CandidateInfo, error) {
-	log.Printf("INFO: Fetching candidate details for TG ID: %d", tgID)
+	log.Printf("INFO: Fetching candidate details for TG ID: %s", tgID)
 
 	user, err := u.userRepo.GetUserByTgID(tgID)
 	if err != nil {
@@ -96,10 +96,10 @@ func (u *candidateUsecase) GetCandidateInfoByTgID(tgID string) (*dtos.CandidateI
 	// Fetch candidate details
 	candidate, err := u.candidateRepo.GetCandidateByID(user.ID)
 	if err != nil {
-		log.Printf("ERROR: Error fetching candidate with TG ID: %d. Error: %v", tgID, err)
+		log.Printf("ERROR: Error fetching candidate with TG ID: %s. Error: %v", tgID, err)
 		return nil, fmt.Errorf("error fetching candidate: %v", err)
 	}
-	log.Printf("INFO: Successfully fetched candidate details for TG ID: %d", tgID)
+	log.Printf("INFO: Successfully fetched candidate details for TG ID: %s", tgID)
 
 	// Fetch candidate's resume
 	resume, err := u.resumeRepo.GetResumeByCandidateID(candidate.ID)
