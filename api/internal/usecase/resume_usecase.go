@@ -107,19 +107,24 @@ func (u *resumeUsecase) UploadResume(resume *model.Resume, filePath string) erro
 
 	// Get user by Telegram ID
 	var telegramID string
+	var user *model.User
 	if resume.UploadedByUserID != nil {
-
 		telegramID = strconv.FormatUint(uint64(*resume.UploadedByUserID), 10)
+		user, err = u.userRepo.GetUserByID(*resume.UploadedByUserID)
+		if err != nil {
+			log.Printf("Error getting user by Telegram ID. telegramID: %s, error: %v", telegramID, err)
+			return fmt.Errorf("error getting user: %v", err)
+		}
 	} else {
-
 		telegramID = strconv.FormatUint(uint64(resume.CandidateID), 10)
+		user, err = u.userRepo.GetUserByID(resume.CandidateID)
+		if err != nil {
+			log.Printf("Error getting user by Telegram ID. telegramID: %s, error: %v", telegramID, err)
+			return fmt.Errorf("error getting user: %v", err)
+		}
 	}
 	log.Printf("Fetching user by Telegram ID: %s", telegramID)
-	user, err := u.userRepo.GetUserByID(*resume.UploadedByUserID)
-	if err != nil {
-		log.Printf("Error getting user by Telegram ID. telegramID: %s, error: %v", telegramID, err)
-		return fmt.Errorf("error getting user: %v", err)
-	}
+
 	log.Printf("User fetched successfully. User ID: %v", user.ID)
 
 	// Create the candidate in the database
