@@ -207,7 +207,7 @@ func (u *resumeUsecase) RunResumeAnalysis(resumeID uint) (*model.ResumeAnalysisR
 	allPrompts := prompts.NewPrompts()
 	pc := prompts.NewPromptConstructor()
 	resumeAnalysisData := prompts_storage.ResumeAnalysisData{ResumeText: resume.RewrittenResume}
-	prompt, err := pc.GetPrompt(allPrompts.ResumeAnalysisPrompt, resumeAnalysisData, "Russian", true)
+	prompt, err := pc.GetPrompt(allPrompts.ResumeAnalysisPrompt, resumeAnalysisData, "", true)
 	if err != nil {
 		return nil, errors.New("error generating LLM prompt for resume analysis")
 	}
