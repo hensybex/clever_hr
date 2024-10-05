@@ -19,6 +19,12 @@ def upload_candidate_keyboard():
     ])
     return keyboard
 
+def candidate_resume_analysis_keyboard() -> InlineKeyboardMarkup:
+    keyboard_builder = InlineKeyboardBuilder()
+    keyboard_builder.add(
+        InlineKeyboardButton(text="Назад", callback_data=f"candidate_profile")
+    )
+    return keyboard_builder.as_markup()
 
 def candidate_profile_keyboard(candidate_id: int, resume_id: int, resume_url: str = None, resume_was_analyzed: bool = False) -> InlineKeyboardMarkup:
     if resume_url:
