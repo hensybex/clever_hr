@@ -1,5 +1,6 @@
 # utils/api_client.py
 
+import asyncio
 import aiohttp
 import json
 from config import API_BASE_URL
@@ -96,20 +97,43 @@ class APIClient:
             async with session.get(url) as response:
                 return await response.json()
 
-    async def analyze_interview_message_websocket(self, interview_id, messages, on_message_callback):
+    async def analyze_interview_message_websocket(self, interview_id, messages, on_message_callback, reply_message):
         """
         Establishes a WebSocket connection for real-time interview message analysis.
+        Combines WebSocket chunks into a full response and updates the same message every 2 seconds.
         """
         uri = f"{self.base_url.replace('http', 'ws')}/ws/interview/analyse"
+        full_response = ""  # Initialize full response string
+
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(uri) as ws:
                 await ws.send_str(json.dumps({'interview_id': interview_id, 'messages': messages}))
+
+                # Create a task to periodically update the reply message every 2 seconds
+                async def update_reply_periodically():
+                    nonlocal full_response
+                    while True:
+                        if full_response:
+                            try:
+                                # Edit the reply message with the updated full response
+                                await reply_message.edit_text(f"Ответ:\n{full_response}")
+                            except aiogram.utils.exceptions.MessageNotModified:
+                                pass  # If the message content has not changed, ignore the exception
+
+                        await asyncio.sleep(2)  # Wait for 2 seconds before the next update
+
+                # Start the periodic update task
+                update_task = asyncio.create_task(update_reply_periodically())
 
                 async for msg in ws:
                     if msg.type == aiohttp.WSMsgType.TEXT:
                         await on_message_callback(msg.data)
                     elif msg.type == aiohttp.WSMsgType.ERROR:
                         break
+
+                # Cancel the periodic update task after WebSocket connection ends
+                update_task.cancel()
+
 
     async def switch_user_type(self, user_id):
         """

@@ -157,10 +157,18 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
     interview_id = data.get('interview_id')
     user_message = message.text
 
-    async def on_message_callback(response):
-        await message.reply(f"Ответ:\n{response}")
+    # Send the initial response message to Telegram and hold the message object
+    reply_message = await message.reply("Ответ:\n")
 
-    await api_client.analyze_interview_message_websocket(interview_id, user_message, on_message_callback)
+    full_response = ""
+
+    async def on_message_callback(response_chunk):
+        nonlocal full_response
+        full_response += response_chunk  # Accumulate the response chunks
+
+    # Start the WebSocket communication
+    await api_client.analyze_interview_message_websocket(interview_id, user_message, on_message_callback, reply_message)
+
 
 # Stop the interview
 @router.callback_query(F.data == 'stop_interview')
