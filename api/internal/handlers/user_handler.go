@@ -8,17 +8,25 @@ import (
 	"strconv"
 
 	"clever_hr_api/internal/dtos"
+	"clever_hr_api/internal/model"
 	"clever_hr_api/internal/usecase"
 
 	"github.com/gin-gonic/gin"
 )
 
 type UserHandler struct {
-	userUsecase usecase.UserUsecase
+	userUsecase      usecase.UserUsecase
+	candidateUsecase usecase.CandidateUsecase
 }
 
-func NewUserHandler(userUsecase usecase.UserUsecase) *UserHandler {
-	return &UserHandler{userUsecase}
+func NewUserHandler(
+	userUsecase usecase.UserUsecase,
+	candidateUsecase usecase.CandidateUsecase,
+) *UserHandler {
+	return &UserHandler{
+		userUsecase,
+		candidateUsecase,
+	}
 }
 
 func (h *UserHandler) CreateUser(c *gin.Context) {

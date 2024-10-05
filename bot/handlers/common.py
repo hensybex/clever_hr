@@ -61,12 +61,13 @@ async def process_register_callback(callback_query: types.CallbackQuery):
 @router.message(F.document.mime_type == 'application/pdf')
 async def handle_resume_document(message: types.Message):
     # Retrieve the user role from the API, database, or context (this is just an example, you can adjust it)
-    user_role = await api_client.get_user_role(tg_id=message.from_user.id)
+    response = await api_client.get_user_role(tg_id=message.from_user.id)
 
     # Download the file
     file_info = await message.bot.get_file(message.document.file_id)
     file = await message.bot.download_file(file_info.file_path)
     file_bytes = file.read()
+    user_role = response.get("role", "none")
 
     # Handle based on user role
     if user_role == 'employee':
