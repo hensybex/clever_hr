@@ -13,6 +13,7 @@ type UserUsecase interface {
 	GetUserByTgID(tgID string) (*model.User, error)
 	SwitchUserType(userID uint) error
 	GetCandidatesByTGID(userID string) ([]model.Candidate, error)
+	GetUserRoleByTgID(tgID string) (string, error)
 }
 
 type userUsecase struct {
@@ -51,4 +52,20 @@ func (u *userUsecase) GetCandidatesByTGID(telegramID string) ([]model.Candidate,
 		return nil, err
 	}
 	return candidates, nil
+}
+
+func (u *userUsecase) GetUserRoleByTgID(tgID string) (string, error) {
+	// Call the repository to get the user information
+	user, err := u.userRepo.GetUserByTgID(tgID)
+	if err != nil {
+		return "", err
+	}
+
+	// Check if the user exists
+	if user == nil {
+		return "", nil // This will return a 404 in the handler
+	}
+
+	// Return the user's role (employee or candidate)
+	return string(user.UserType), nil
 }

@@ -107,3 +107,25 @@ func (h *UserHandler) GetCandidatesByUserID(c *gin.Context) {
 	// Return the list of candidates
 	c.JSON(http.StatusOK, gin.H{"candidates": candidates})
 }
+
+func (h *UserHandler) GetUserRoleByTgID(c *gin.Context) {
+	// Get tg_id from the URL parameter
+	tgID := c.Param("user_id")
+
+	// Call the use case to get the user role
+	role, err := h.userUsecase.GetUserRoleByTgID(tgID)
+	if err != nil {
+		log.Printf("Error fetching user role for tg_id %s: %v", tgID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to fetch user role"})
+		return
+	}
+
+	// If role is not found, return a 404 response
+	if role == "" {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// Return the role as a JSON response
+	c.JSON(http.StatusOK, gin.H{"role": role})
+}

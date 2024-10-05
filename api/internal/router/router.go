@@ -65,6 +65,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		api.GET("/users/:user_id/info", userHandler.GetUser)
 		api.PUT("/users/:user_id/switch", userHandler.SwitchUserType)
 		api.GET("/users/:user_id/candidates", userHandler.GetCandidatesByUserID)
+		api.GET("/users/:user_id/get_role", userHandler.GetUserRoleByTgID)
 
 		// Resume routes
 		api.POST("/resumes/employee", resumeHandler.EmployeeUploadResume)

@@ -17,6 +17,15 @@ class APIClient:
         async with aiohttp.ClientSession() as session:
             async with session.post(url, json=data) as response:
                 return await response.json()
+    
+    async def get_user_role(self, tg_id):
+        """
+        Creates a new user (employee or candidate).
+        """
+        url = f"{self.base_url}/users/{tg_id}/get_role"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as response:
+                return await response.json()
 
     async def get_user(self, user_id):
         """
