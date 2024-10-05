@@ -50,8 +50,8 @@ func NewInterviewUsecase(
 */
 
 func (u *interviewUsecase) CreateInterview(interviewDTO dtos.CreateInterviewDTO) error {
-	/* // Check if the user has uploaded a resume based on tg_id
-	resume, err := u.resumeRepo.GetResumeByID(interviewDTO.ResumeID)
+	// Check if the user has uploaded a resume based on tg_id
+	resume, err := u.resumeRepo.GetResumeByTgID(interviewDTO.TgID)
 	if err != nil {
 		return err
 	}
@@ -60,11 +60,8 @@ func (u *interviewUsecase) CreateInterview(interviewDTO dtos.CreateInterviewDTO)
 		return errors.New("no resume found")
 	}
 
-	// If a resume exists, set the ResumeID in the DTO
-	interviewDTO.ResumeID = resume.ID */
-
 	// Convert the DTO to the Interview model
-	interview := interviewDTO.ToInterviewModel()
+	interview := model.Interview{ResumeID: resume.ID, InterviewTypeID: interviewDTO.InterviewTypeID, Status: model.InterviewStatus(model.InProgress)}
 
 	// Create the interview using the repository
 	if err := u.interviewRepo.CreateInterview(&interview); err != nil {
