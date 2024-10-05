@@ -19,10 +19,25 @@ def upload_candidate_keyboard():
     ])
     return keyboard
 
-def candidate_profile_keyboard():
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="Назад", callback_data="candidate_main_menu")]
-    ])
+
+def candidate_profile_keyboard(candidate_id: int, resume_id: int, resume_url: str = None, resume_was_analyzed: bool = False) -> InlineKeyboardMarkup:
+    if resume_url:
+        if resume_was_analyzed:
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Назад", callback_data="candidate_main_menu")],
+                [InlineKeyboardButton(text="Скачать резюме", callback_data=f"download_resume_{candidate_id}")],
+                [InlineKeyboardButton(text="Посмотреть результаты анализа резюме", callback_data=f"check_resume_analysis_{resume_id}")],
+            ])
+        else:
+            keyboard = InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="Назад", callback_data="candidate_main_menu")],
+                [InlineKeyboardButton(text="Скачать резюме", callback_data=f"download_resume_{candidate_id}")],
+                [InlineKeyboardButton(text="Запустить анализ резюме", callback_data=f"run_resume_analysis_{resume_id}")],
+            ])
+    else:
+        keyboard = InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="Назад", callback_data="candidate_main_menu")],
+        ])
     return keyboard
 
 def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyboardMarkup:

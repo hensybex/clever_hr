@@ -78,6 +78,46 @@ async def handle_resume_document(message: types.Message):
 @router.callback_query(F.data == 'candidate_profile')
 async def candidate_profile(callback_query: types.CallbackQuery):
     candidate_info = await api_client.get_candidate_info_by_tg_id(callback_query.from_user.id)
+    # Log the fetched candidate info to inspect the structure
+    logging.info(f"Candidate Info received: {candidate_info}")
+
+    if candidate_info:
+        try:
+            # Access the 'candidate' nested object
+            candidate = candidate_info.get('candidate', {})
+            
+            # Safely access candidate details with defaults to avoid KeyError
+            candidate_id = candidate.get('id', '0')
+            candidate_name = candidate.get('Name', 'Имя не указано')
+            candidate_email = candidate.get('Email', 'Email не указан')
+            candidate_phone = candidate.get('Phone', 'Телефон не указан')
+            preferable_job = candidate.get('PreferableJob', 'Предпочитаемая работа не указана')
+            
+            # Build the message text with candidate info
+            candidate_message = (
+                f"Ваш профиль:\n"
+                f"Имя: {candidate_name}\n"
+                f"Email: {candidate_email}\n"
+                f"Телефон: {candidate_phone}\n"
+                f"Предпочитаемая работа: {preferable_job}"
+            )
+        except KeyError as e:
+            # Log if there are missing keys
+            logging.error(f"KeyError: Missing key {e} in candidate_info: {candidate_info}")
+            await callback_query.message.edit_text("Ошибка: данные кандидата неполные.", reply_markup=employee_main_menu_keyboard())
+            return
+
+        # Prepare the keyboard using a dedicated function
+        resume_url = candidate_info.get('resume_pdf')
+        resume_id = candidate_info.get('resume_id')
+        resume_was_analyzed = candidate_info.get('was_resume_analysed')
+        keyboard = candidate_profile_keyboard(candidate_id, resume_id, resume_url, resume_was_analyzed)
+        
+        # Send candidate info with the button to download resume
+        await callback_query.message.edit_text(candidate_message, reply_markup=keyboard)
+    else:
+        await callback_query.message.edit_text("Кандидат не найден.", reply_markup=employee_main_menu_keyboard())
+
     if candidate_info:
         await callback_query.message.edit_text(
             f"Ваш профиль:\nИмя: {candidate_info['name']}\nEmail: {candidate_info['email']}",
