@@ -133,7 +133,7 @@ class APIClient:
         """
         Fetches candidate information by candidate ID.
         """
-        url = f"{self.base_url}/candidates/{candidate_id}"
+        url = f"{self.base_url}/candidates/{candidate_id}/get_by_id"
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 return await response.json()
@@ -142,7 +142,7 @@ class APIClient:
         """
         Fetches candidate information by Telegram ID.
         """
-        url = f"{self.base_url}/candidates/tg/{tg_id}"
+        url = f"{self.base_url}/candidates/{tg_id}/get_by_tg_id"
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 return await response.json()
