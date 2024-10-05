@@ -40,7 +40,7 @@ func (h *CandidateHandler) GetCandidateInfo(c *gin.Context) {
 }
 
 func (h *CandidateHandler) GetCandidateInfoByTgID(c *gin.Context) {
-	tgIDStr := c.Param("tg_id")
+	tgIDStr := c.Param("user_id")
 
 	candidateInfo, err := h.candidateUsecase.GetCandidateInfoByTgID(tgIDStr)
 	if err != nil {
