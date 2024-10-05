@@ -90,7 +90,7 @@ func (h *UserHandler) SwitchUserType(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "User type switched successfully"})
+	c.JSON(http.StatusOK, gin.H{"message": "Тип пользователя успешно изменен"})
 }
 
 func (h *UserHandler) GetCandidatesByUserID(c *gin.Context) {
