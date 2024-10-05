@@ -176,7 +176,6 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
                 full_response += response['result']
 
             # Handle the end of the interview
-            logging.info(response)
             if 'status' in response and response['status'] == 'End of interview':
                 await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=candidate_main_menu_keyboard())
                 return
@@ -206,12 +205,12 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             await reply_message.edit_text(full_response)
         except aiogram.utils.exceptions.MessageNotModified:
             pass
-    else:
+"""     else:
         # If no response has been sent, send a thank you message
         await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=candidate_main_menu_keyboard())
 
 
-
+ """
 
 
 
