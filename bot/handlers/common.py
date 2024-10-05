@@ -21,7 +21,7 @@ router = Router()
 @router.message(CommandStart())
 async def cmd_start(message: types.Message):
     response = await api_client.get_user_role(tg_id=message.from_user.id)
-    message = "Добро пожаловать в бот для анализа резюме!",
+    message = "Добро пожаловать в бот для анализа резюме!"
     logging.info(response)
     user_role = response.get("role", "none")
     logging.info(user_role)
