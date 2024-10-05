@@ -32,7 +32,7 @@ def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyb
 
     for interview_type in interview_types[:10]:
         keyboard_builder.add(
-            InlineKeyboardButton(text=interview_type['Name'], callback_data=f"candidate_interview_type_{interview_type['id']}")
+            InlineKeyboardButton(text=interview_type['Name'], callback_data=f"candidate_interview_type_{interview_type['ID']}")
         )
     
     # Pagination Buttons
@@ -54,6 +54,7 @@ def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyb
     keyboard_builder.adjust(1)
     
     return keyboard_builder.as_markup()
+
 
 def interview_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
