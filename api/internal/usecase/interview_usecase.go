@@ -120,7 +120,7 @@ func (u *interviewUsecase) AnalyseInterviewMessageWebsocket(clientMsg dtos.Clien
 	allPrompts := prompts.NewPrompts()
 	pc := prompts.NewPromptConstructor()
 	dialogData := prompts_storage.InterviewMessageAnalysisData{PreviousMessages: formattedMessages, LatestMessage: clientMsg.Message, InterviewType: interviewType.Name}
-	prompt, err := pc.GetPrompt(allPrompts.InterviewMessageAnalysisPrompt, dialogData, "", true)
+	prompt, err := pc.GetPrompt(allPrompts.InterviewMessageAnalysisPrompt, dialogData, "Russian", true)
 	if err != nil {
 		conn.WriteJSON(dtos.ServerMessage{Status: "Error generating prompt"})
 		return
