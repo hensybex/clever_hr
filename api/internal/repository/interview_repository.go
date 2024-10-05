@@ -10,6 +10,7 @@ import (
 type InterviewRepository interface {
 	CreateInterview(interview *model.Interview) error
 	GetInterviewByID(id uint) (*model.Interview, error)
+	UpdateInterviewStatus(id uint, status string) error
 }
 
 type interviewRepository struct {
@@ -31,4 +32,8 @@ func (r *interviewRepository) GetInterviewByID(id uint) (*model.Interview, error
 		return nil, err
 	}
 	return &interview, nil
+}
+
+func (r *interviewRepository) UpdateInterviewStatus(id uint, status string) error {
+	return r.db.Model(&model.Interview{}).Where("id = ?", id).Update("status", status).Error
 }

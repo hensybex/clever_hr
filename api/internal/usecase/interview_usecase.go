@@ -9,9 +9,11 @@ import (
 	"clever_hr_api/internal/prompts/prompts_storage"
 	"clever_hr_api/internal/repository"
 	"clever_hr_api/internal/service"
+	"encoding/json"
 	"errors"
 	"log"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -113,6 +115,7 @@ func (u *interviewUsecase) AnalyseInterviewMessageWebsocket(clientMsg dtos.Clien
 		// End the interview if message count exceeds 6
 		conn.WriteJSON(dtos.ServerMessage{Status: "End of interview"})
 		// Trigger interview analysis
+		u.interviewRepo.UpdateInterviewStatus(uint(clientMsg.InterviewID), string(model.BeingAnalysed))
 		if _, err := u.RunFullInterviewAnalysis(uint(clientMsg.InterviewID)); err != nil {
 			log.Printf("Error triggering interview analysis: %v", err)
 		}
@@ -191,7 +194,10 @@ func (u *interviewUsecase) RunFullInterviewAnalysis(interviewID uint) (*model.In
 	// Construct prompt for the LLM using the previous messages and the current message
 	allPrompts := prompts.NewPrompts()
 	pc := prompts.NewPromptConstructor()
-	interviewAnalysisData := prompts_storage.FullInterviewAnalysisData{InterviewMessages: formattedMessages, InterviewType: interviewType.Name}
+	interviewAnalysisData := prompts_storage.FullInterviewAnalysisData{
+		InterviewMessages: formattedMessages,
+		InterviewType:     interviewType.Name,
+	}
 	prompt, err := pc.GetPrompt(allPrompts.FullInterviewAnalysisPrompt, interviewAnalysisData, "", true)
 	if err != nil {
 		return nil, errors.New("failed to generate prompt")
@@ -204,13 +210,32 @@ func (u *interviewUsecase) RunFullInterviewAnalysis(interviewID uint) (*model.In
 		return nil, errors.New("llm failure")
 	}
 
+	// Parse the full response (Assuming fullResponse is in a structured JSON format)
+	var parsedResult struct {
+		Assessment     string   `json:"assessment"`
+		Strengths      []string `json:"strengths"`
+		Weaknesses     []string `json:"weaknesses"`
+		Recommendation string   `json:"recommendation"`
+		Reason         string   `json:"reason"`
+	}
+	err = json.Unmarshal([]byte(fullResponse), &parsedResult)
+	if err != nil {
+		log.Printf("Error parsing LLM response: %v", err)
+		return nil, errors.New("failed to parse LLM response")
+	}
+
 	// Simulating full interview analysis result
 	analysisResult := &model.InterviewAnalysisResult{
-		InterviewID:  interviewID,
-		GPTCallID:    &gptCallID,
-		ResultStatus: model.ResultFinished,
-		Result:       fullResponse,
+		InterviewID:    interviewID,
+		GPTCallID:      &gptCallID,
+		ResultStatus:   model.ResultFinished,
+		Assessment:     parsedResult.Assessment,
+		Strengths:      strings.Join(parsedResult.Strengths, ", "),  // Store strengths as comma-separated string
+		Weaknesses:     strings.Join(parsedResult.Weaknesses, ", "), // Store weaknesses as comma-separated string
+		Recommendation: parsedResult.Recommendation,
+		Reason:         parsedResult.Reason,
 	}
+	u.interviewRepo.UpdateInterviewStatus(interviewID, string(model.AnalysisFinished))
 
 	// Save the analysis result
 	if err := u.analysisRepo.CreateInterviewAnalysisResult(analysisResult); err != nil {
