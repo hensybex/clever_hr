@@ -100,6 +100,7 @@ func (u *interviewUsecase) AnalyseInterviewMessageWebsocket(clientMsg dtos.Clien
 	}
 	if err := u.messageRepo.CreateMessage(newMessage); err != nil {
 		conn.WriteJSON(dtos.ServerMessage{Status: "Error creating message"})
+		log.Printf("Error creating message for InterviewID: %d, Error: %v", clientMsg.InterviewID, err)
 		return
 	}
 
@@ -107,7 +108,14 @@ func (u *interviewUsecase) AnalyseInterviewMessageWebsocket(clientMsg dtos.Clien
 	previousMessages, err := u.messageRepo.GetMessagesByInterviewID(uint(clientMsg.InterviewID))
 	if err != nil {
 		conn.WriteJSON(dtos.ServerMessage{Status: "Error fetching previous messages"})
+		log.Printf("Error fetching previous messages for InterviewID: %d, Error: %v", clientMsg.InterviewID, err)
 		return
+	}
+
+	// Log the number and details of previous messages
+	log.Printf("InterviewID: %d, Number of previous messages: %d", clientMsg.InterviewID, len(previousMessages))
+	for i, message := range previousMessages {
+		log.Printf("Message %d: %v", i+1, message)
 	}
 
 	// Check if the number of previous messages exceeds 6
