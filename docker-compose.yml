@@ -10,16 +10,16 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - app-network # Add the network to the service
+      - app-network
 
   api:
     build:
       context: ./api
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "8081:8080"
+    # Remove the volume mapping for /app
     volumes:
-      - ./api:/app
       - go_mod_cache:/go/pkg/mod
       - ./uploads:/app/uploads
     environment:
@@ -33,7 +33,7 @@ services:
     depends_on:
       - db
     networks:
-      - app-network # Add the network to the service
+      - app-network
 
   telegram-bot:
     build:
@@ -45,11 +45,10 @@ services:
     depends_on:
       - api
     networks:
-      - app-network # Add the network to the service
+      - app-network
 
 networks:
   app-network:
-    # Define the network
     driver: bridge
 
 volumes:
