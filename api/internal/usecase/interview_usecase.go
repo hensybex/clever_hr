@@ -24,15 +24,14 @@ type InterviewUsecase interface {
 }
 
 type interviewUsecase struct {
-	interviewRepo            repository.InterviewRepository
-	interviewTypeRepo        repository.InterviewTypeRepository
-	messageRepo              repository.InterviewMessageRepository
-	analysisRepo             repository.InterviewAnalysisResultRepository
-	resumeRepo               repository.ResumeRepository
-	userRepo                 repository.UserRepository
-	candidateRepo            repository.CandidateRepository
-	mistralService           service.MistralService
-	interviewAnalysisUsecase InterviewAnalysisResultUsecase
+	interviewRepo     repository.InterviewRepository
+	interviewTypeRepo repository.InterviewTypeRepository
+	messageRepo       repository.InterviewMessageRepository
+	analysisRepo      repository.InterviewAnalysisResultRepository
+	resumeRepo        repository.ResumeRepository
+	userRepo          repository.UserRepository
+	candidateRepo     repository.CandidateRepository
+	mistralService    service.MistralService
 }
 
 func NewInterviewUsecase(
@@ -44,7 +43,6 @@ func NewInterviewUsecase(
 	userRepo repository.UserRepository,
 	candidateRepo repository.CandidateRepository,
 	mistralService service.MistralService,
-	interviewAnalysisUsecase InterviewAnalysisResultUsecase,
 ) InterviewUsecase {
 	return &interviewUsecase{
 		interviewRepo,
@@ -55,7 +53,6 @@ func NewInterviewUsecase(
 		userRepo,
 		candidateRepo,
 		mistralService,
-		interviewAnalysisUsecase,
 	}
 }
 
