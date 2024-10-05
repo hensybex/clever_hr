@@ -22,6 +22,7 @@ router = Router()
 async def cmd_start(message: types.Message):
     user_role = await api_client.get_user_role(tg_id=message.from_user.id)
     message = "Добро пожаловать в бот для анализа резюме!",
+    logging.info(user_role)
     if user_role == 'employee':
         await message.answer(
             message,
