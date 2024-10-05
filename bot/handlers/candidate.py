@@ -2,6 +2,7 @@
 
 import asyncio
 import json
+import aiogram
 from aiogram import types, Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
