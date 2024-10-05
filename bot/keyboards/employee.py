@@ -8,7 +8,7 @@ def employee_main_menu_keyboard():
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Загрузить резюме кандидата", callback_data="employee_upload_resume")],
         [InlineKeyboardButton(text="Список кандидатов", callback_data="employee_list_candidates")],
-        [InlineKeyboardButton(text="Сменить тип пользователя", callback_data="switch_user_type")]
+        [InlineKeyboardButton(text="Сменить тип пользователя", callback_data="switch_user_type_employee")]
     ])
     return keyboard
 

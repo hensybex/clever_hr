@@ -111,7 +111,7 @@ async def stop_interview(callback_query: types.CallbackQuery, state: FSMContext)
     await callback_query.message.edit_text("Интервью завершено.", reply_markup=candidate_main_menu_keyboard())
 
 # Switching user type for candidate
-@router.callback_query(F.data == 'switch_user_type')
+@router.callback_query(F.data == 'switch_user_type_candidate')
 async def switch_user_type(callback_query: types.CallbackQuery):
     response = await api_client.switch_user_type(callback_query.from_user.id)
     await callback_query.message.edit_text(

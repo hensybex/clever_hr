@@ -9,7 +9,7 @@ def candidate_main_menu_keyboard():
         [InlineKeyboardButton(text="Загрузить резюме", callback_data="candidate_upload_resume")],
         [InlineKeyboardButton(text="Профиль", callback_data="candidate_profile")],
         [InlineKeyboardButton(text="Начать интервью", callback_data="candidate_start_interview")],
-        [InlineKeyboardButton(text="Сменить тип пользователя", callback_data="switch_user_type")]
+        [InlineKeyboardButton(text="Сменить тип пользователя", callback_data="switch_user_type_candidate")]
     ])
     return keyboard
 

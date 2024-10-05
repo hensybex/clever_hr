@@ -128,7 +128,7 @@ async def employee_candidate_check(callback_query: types.CallbackQuery):
 
 
 
-@router.callback_query(F.data == 'switch_user_type')
+@router.callback_query(F.data == 'switch_user_type_employee')
 async def switch_user_type(callback_query: types.CallbackQuery):
     response = await api_client.switch_user_type(callback_query.from_user.id)
     await callback_query.message.edit_text(
