@@ -177,7 +177,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
 
             # Handle the end of the interview
             if 'status' in response and response['status'] == 'End of interview':
-                await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=main_menu)
+                await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=candidate_main_menu_keyboard())
                 return
 
             # Send the initial message only after the first set of chunks is obtained
@@ -207,7 +207,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             pass
     else:
         # If no response has been sent, send a thank you message
-        await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=main_menu)
+        await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=candidate_main_menu_keyboard())
 
 
 
