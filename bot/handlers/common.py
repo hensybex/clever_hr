@@ -21,25 +21,27 @@ router = Router()
 @router.message(CommandStart())
 async def cmd_start(message: types.Message):
     response = await api_client.get_user_role(tg_id=message.from_user.id)
-    message = "Добро пожаловать в бот для анализа резюме!"
+    welcome_message = "Добро пожаловать в бот для анализа резюме!"  # Changed variable name
     logging.info(response)
     user_role = response.get("role", "none")
     logging.info(user_role)
+
     if user_role == 'employee':
         await message.answer(
-            message,
+            welcome_message,  # Use the new variable here
             reply_markup=employee_main_menu_keyboard()
         )
     elif user_role == 'candidate':
         await message.answer(
-            message,
+            welcome_message,  # Use the new variable here
             reply_markup=candidate_main_menu_keyboard()
         )
     else:
         await message.answer(
-            message,
+            welcome_message,  # Use the new variable here
             reply_markup=start_keyboard()
         )
+
 
 @router.callback_query(F.data.startswith("register_"))
 async def process_register_callback(callback_query: types.CallbackQuery):
