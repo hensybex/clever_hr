@@ -96,14 +96,14 @@ class APIClient:
             async with session.get(url) as response:
                 return await response.json()
 
-    async def analyze_interview_message_websocket(self, interview_id, messages, on_message_callback):
+    async def analyze_interview_message_websocket(self, interview_id, message, on_message_callback):
         """
         Establishes a WebSocket connection for real-time interview message analysis.
         """
         uri = f"{self.base_url.replace('http', 'ws')}/ws/interview/analyse"
         async with aiohttp.ClientSession() as session:
             async with session.ws_connect(uri) as ws:
-                await ws.send_str(json.dumps({'interview_id': interview_id, 'messages': messages}))
+                await ws.send_str(json.dumps({'interview_id': interview_id, 'message': message}))
 
                 async for msg in ws:
                     if msg.type == aiohttp.WSMsgType.TEXT:
