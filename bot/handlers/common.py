@@ -76,7 +76,7 @@ async def handle_resume_document(message: types.Message):
             user_id=message.from_user.id
         )
         await message.reply(
-            "Резюме успешно загружено и отправлено на анализ." if response.get('success') else "Произошла ошибка при загрузке резюме.",
+            "Резюме успешно загружено. Вы можете отправить его на анализ во вкладке Список кандидатов -> Нужный кандидат" if response.get('success') else "Произошла ошибка при загрузке резюме.",
             reply_markup=employee_main_menu_keyboard()
         )
     elif user_role == 'candidate':
@@ -85,7 +85,7 @@ async def handle_resume_document(message: types.Message):
             tg_id=message.from_user.id
         )
         await message.reply(
-            "Ваше резюме успешно загружено и отправлено на анализ." if response.get('success') else "Произошла ошибка при загрузке резюме.",
+            "Ваше резюме успешно загружено. Вы можете отправить его на анализ во вкладке Профиль." if response.get('success') else "Произошла ошибка при загрузке резюме.",
             reply_markup=candidate_main_menu_keyboard()
         )
     else:

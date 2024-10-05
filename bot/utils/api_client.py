@@ -55,7 +55,7 @@ class APIClient:
         """
         url = f"{self.base_url}/resumes/candidate"
         data = aiohttp.FormData()
-        data.add_field('resume_pdf', resume_file, filename='resume.pdf', content_type='application/pdf')
+        data.add_field('resume', resume_file, filename='resume.pdf', content_type='application/pdf')
         data.add_field('tg_id', str(tg_id))
 
         async with aiohttp.ClientSession() as session:
