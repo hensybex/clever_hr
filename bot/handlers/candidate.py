@@ -58,7 +58,7 @@ async def candidate_upload_resume(callback_query: types.CallbackQuery):
     await callback_query.message.edit_text("Пожалуйста, отправьте ваш PDF файл резюме.", reply_markup=upload_candidate_keyboard())
 
 # Handle document upload
-@router.message(F.document.mime_type == 'application/pdf')
+""" @router.message(F.document.mime_type == 'application/pdf')
 async def handle_resume_document(message: types.Message):
     file_info = await message.bot.get_file(message.document.file_id)
     file = await message.bot.download_file(file_info.file_path)
@@ -72,7 +72,7 @@ async def handle_resume_document(message: types.Message):
     await message.reply(
         "Ваше резюме успешно загружено и отправлено на анализ." if response.get('success') else "Произошла ошибка при загрузке резюме.",
         reply_markup=candidate_main_menu_keyboard()
-    )
+    ) """
 
 # Profile check for candidate
 @router.callback_query(F.data == 'candidate_profile')

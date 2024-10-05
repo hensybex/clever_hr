@@ -53,7 +53,7 @@ async def employee_upload_resume(callback_query: types.CallbackQuery):
     await callback_query.message.edit_text("Пожалуйста, отправьте PDF файл резюме кандидата.", reply_markup=upload_employee_keyboard())
 
 # Handle uploaded resume (for employees)
-@router.message(F.document.mime_type == 'application/pdf')
+""" @router.message(F.document.mime_type == 'application/pdf')
 async def handle_resume_document(message: types.Message):
     file_info = await message.bot.get_file(message.document.file_id)
     file = await message.bot.download_file(file_info.file_path)
@@ -67,7 +67,7 @@ async def handle_resume_document(message: types.Message):
     await message.reply(
         "Резюме успешно загружено и отправлено на анализ." if response.get('success') else "Произошла ошибка при загрузке резюме.",
         reply_markup=employee_main_menu_keyboard()
-    )
+    ) """
 
 # Correct: Add await for api_client.get_uploaded_candidates
 @router.callback_query(F.data == 'employee_list_candidates')
