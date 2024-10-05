@@ -28,6 +28,8 @@ def candidate_profile_keyboard():
 def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
 
+    logging.info(f"Interview types: {interview_type}")
+
     for interview_type in interview_types[:10]:
         keyboard_builder.add(
             InlineKeyboardButton(text=interview_type['name'], callback_data=f"candidate_interview_type_{interview_type['id']}")
