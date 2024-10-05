@@ -177,7 +177,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
                 if response['status'] == "Processing started":
                     full_response += ""
                 elif response['status'] == "Completed":
-                    full_response += ""
+                    full_response += " "
             
             # Handle 'result' chunks and accumulate them
             if 'result' in response:
