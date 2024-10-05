@@ -3,6 +3,8 @@
 package handlers
 
 import (
+	"bytes"
+	"io"
 	"log"
 	"net/http"
 	"strconv"
@@ -30,17 +32,41 @@ func NewInterviewHandler(interviewUsecase usecase.InterviewUsecase) *InterviewHa
 
 func (h *InterviewHandler) CreateInterview(c *gin.Context) {
 	var interviewDTO dtos.CreateInterviewDTO
+
+	// Log the incoming request body
+	bodyBytes, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Printf("Error reading request body: %v", err)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+	log.Printf("Request Body: %s", string(bodyBytes))
+
+	// Reset the body for ShouldBindJSON to read it again
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(bodyBytes))
+
+	// Bind the JSON input to interviewDTO
 	if err := c.ShouldBindJSON(&interviewDTO); err != nil {
+		log.Printf("Error binding JSON: %v", err) // Log JSON binding error
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
+	// Convert DTO to Interview model
 	interview := interviewDTO.ToInterviewModel()
+
+	// Log the interview object to be created
+	log.Printf("Interview Object: %+v", interview)
+
+	// Attempt to create the interview using the use case
 	if err := h.interviewUsecase.CreateInterview(&interview); err != nil {
+		log.Printf("Error creating interview: %v", err) // Log any error from the use case
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
+	// If successful, log the success and return the response
+	log.Println("Interview created successfully")
 	c.JSON(http.StatusCreated, gin.H{"success": true, "message": "Interview created successfully"})
 }
 
