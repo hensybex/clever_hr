@@ -187,7 +187,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             current_time = asyncio.get_event_loop().time()
             if current_time - last_update_time >= 2:
                 try:
-                    await reply_message.edit_text(f{full_response})
+                    await reply_message.edit_text(full_response)
                     last_update_time = current_time  # Update the last update time
                 except aiogram.utils.exceptions.MessageNotModified:
                     pass  # Ignore if message content hasn't changed
