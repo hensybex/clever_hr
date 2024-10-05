@@ -48,31 +48,33 @@ func (h *InterviewHandler) CreateInterview(c *gin.Context) {
 
 	// Bind the JSON input to interviewDTO (without ResumeID for now)
 	if err := c.ShouldBindJSON(&interviewDTO); err != nil {
-		log.Printf("Error binding JSON: %v", err) // Log JSON binding error
+		log.Printf("Error binding JSON: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// Pass to the usecase to handle the business logic
-	err = h.interviewUsecase.CreateInterview(interviewDTO)
+	// Call the usecase and get the created interview ID
+	interviewID, err := h.interviewUsecase.CreateInterview(interviewDTO)
 	if err != nil {
 		if err == errors.New("no resume found") {
-			// Custom error indicating no resume was found
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error":   "Resume not found",
 				"message": "Пожалуйста, загрузите резюме, прежде чем начинать собеседование.",
 			})
 		} else {
-			// Handle internal server errors
 			log.Printf("Error creating interview: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "An error occurred while creating the interview"})
 		}
 		return
 	}
 
-	// Success response
-	log.Println("Interview created successfully")
-	c.JSON(http.StatusCreated, gin.H{"success": true, "message": "Interview created successfully"})
+	// Success response with the interview ID
+	log.Printf("Interview created successfully with ID: %d", interviewID)
+	c.JSON(http.StatusCreated, gin.H{
+		"success":      true,
+		"message":      "Interview created successfully",
+		"interview_id": interviewID, // Add the interview ID to the response
+	})
 }
 
 func (h *InterviewHandler) AnalyseInterviewMessageWebsocket(c *gin.Context) {

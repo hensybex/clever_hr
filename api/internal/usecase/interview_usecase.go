@@ -17,7 +17,7 @@ import (
 )
 
 type InterviewUsecase interface {
-	CreateInterview(interviewDTO dtos.CreateInterviewDTO) error
+	CreateInterview(interviewDTO dtos.CreateInterviewDTO) (uint, error)
 	AnalyseInterviewMessageWebsocket(clientMsg dtos.ClientMessage, conn *websocket.Conn)
 	RunFullInterviewAnalysis(interviewID uint) (*model.InterviewAnalysisResult, error)
 	GetInterviewAnalysisResult(interviewID uint) (*model.InterviewAnalysisResult, error)
@@ -49,28 +49,23 @@ func NewInterviewUsecase(
 	}
 }
 
-/* func (u *interviewUsecase) CreateInterview(interview *model.Interview) error {
-	return u.interviewRepo.CreateInterview(interview)
-}
-*/
-
-func (u *interviewUsecase) CreateInterview(interviewDTO dtos.CreateInterviewDTO) error {
+func (u *interviewUsecase) CreateInterview(interviewDTO dtos.CreateInterviewDTO) (uint, error) {
 	// Check if the user has uploaded a resume based on tg_id
 	user, err := u.userRepo.GetUserByTgID(strconv.FormatUint(uint64(interviewDTO.TgID), 10))
 	if err != nil {
-		return err
+		return 0, err
 	}
 	candidate, err := u.candidateRepo.GetCandidateByUploadedID(user.ID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	resume, err := u.resumeRepo.GetResumeByCandidateID(candidate.ID)
 	if err != nil {
-		return err
+		return 0, err
 	}
 	if resume == nil {
 		// No resume found, return a custom error
-		return errors.New("no resume found")
+		return 0, errors.New("no resume found")
 	}
 
 	// Convert the DTO to the Interview model
@@ -78,10 +73,10 @@ func (u *interviewUsecase) CreateInterview(interviewDTO dtos.CreateInterviewDTO)
 
 	// Create the interview using the repository
 	if err := u.interviewRepo.CreateInterview(&interview); err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return interview.ID, nil
 }
 
 func (u *interviewUsecase) AnalyseInterviewMessageWebsocket(clientMsg dtos.ClientMessage, conn *websocket.Conn) {
