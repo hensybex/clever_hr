@@ -39,6 +39,19 @@ func (h *CandidateHandler) GetCandidateInfo(c *gin.Context) {
 	c.JSON(http.StatusOK, candidateInfo)
 }
 
+func (h *CandidateHandler) GetCandidateInfoByTgID(c *gin.Context) {
+	tgIDStr := c.Param("tg_id")
+
+	candidateInfo, err := h.candidateUsecase.GetCandidateInfoByTgID(tgIDStr)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch candidate info"})
+		return
+	}
+
+	// Return the candidate metadata as JSON (without the resume PDF)
+	c.JSON(http.StatusOK, candidateInfo)
+}
+
 func (h *CandidateHandler) GetResume(c *gin.Context) {
 	// Get the candidate_id and resume_path from the query parameters
 	candidateID := c.Param("candidate_id")

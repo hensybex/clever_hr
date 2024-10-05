@@ -41,7 +41,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	// Initialize use cases
 	userUsecase := usecase.NewUserUsecase(userRepo)
-	candidateUsecase := usecase.NewCandidateUsecase(candidateRepo, resumeRepo, resumeAnalysisResultRepo)
+	candidateUsecase := usecase.NewCandidateUsecase(candidateRepo, resumeRepo, userRepo, resumeAnalysisResultRepo)
 	resumeUsecase := usecase.NewResumeUsecase(resumeRepo, resumeAnalysisResultRepo, candidateRepo, userRepo, *mistralService)
 	interviewUsecase := usecase.NewInterviewUsecase(interviewRepo, interviewTypeRepo, interviewMessageRepo, interviewAnalysisResultRepo, resumeRepo, *mistralService)
 	interviewTypeUsecase := usecase.NewInterviewTypeUsecase(interviewTypeRepo)
@@ -78,7 +78,8 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 		api.GET("/interviews/:interview_id/analysis-result", interviewHandler.GetInterviewAnalysisResult)
 
 		// Candidates routes
-		api.GET("/candidates/:candidate_id", candidateHandler.GetCandidateInfo)
+		api.GET("/candidates/:candidate_id/get_by_id", candidateHandler.GetCandidateInfo)
+		api.GET("/candidates/:candidate_id/get_by_tg_id", candidateHandler.GetCandidateInfoByTgID)
 		api.GET("/candidates/:candidate_id/resume", candidateHandler.GetResume)
 
 		// Interview type routes
