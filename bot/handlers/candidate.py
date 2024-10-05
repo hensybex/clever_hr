@@ -161,8 +161,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
     user_message = message.text
 
     # Send the initial reply message to Telegram and store its message object
-    #reply_message = await message.reply("")
-    reply_started = False
+    reply_message = await message.reply("Ответ:\n")
 
     full_response = ""
     last_update_time = asyncio.get_event_loop().time()
@@ -176,9 +175,9 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             # Handle 'status' messages (e.g., "Processing started", "Completed")
             if 'status' in response:
                 if response['status'] == "Processing started":
-                    full_response += "Процесс начат...\n"
+                    full_response += ""
                 elif response['status'] == "Completed":
-                    full_response += "\nПроцесс завершен."
+                    full_response += ""
             
             # Handle 'result' chunks and accumulate them
             if 'result' in response:
@@ -188,11 +187,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             current_time = asyncio.get_event_loop().time()
             if current_time - last_update_time >= 2:
                 try:
-                    if reply_started:
-                        await reply_message.edit_text(f"{full_response}")
-                    else:
-                        reply_message = await message.reply(f"{full_response}")
-                        reply_started == True
+                    await reply_message.edit_text(f"{full_response}")
                     last_update_time = current_time  # Update the last update time
                 except aiogram.utils.exceptions.MessageNotModified:
                     pass  # Ignore if message content hasn't changed
@@ -205,7 +200,11 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
 
     # Final update after WebSocket communication is complete
     if full_response:
-        await reply_message.edit_text(f"Ответ:\n{full_response}")
+        try:
+            await reply_message.edit_text(f"Ответ:\n{full_response}")
+        except aiogram.utils.exceptions.MessageNotModified:
+            pass
+
 
 
 
