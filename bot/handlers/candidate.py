@@ -153,21 +153,18 @@ async def start_interview(callback_query: types.CallbackQuery, state: FSMContext
     else:
         await callback_query.message.edit_text("Перед началом интервью, загрузите резюме и отправьте его на анализ.", reply_markup=candidate_main_menu_keyboard())
 
-# Handle messages during the interview
 @router.message(InterviewState.in_progress)
 async def handle_interview_message(message: types.Message, state: FSMContext):
     data = await state.get_data()
     interview_id = data.get('interview_id')
     user_message = message.text
 
-    # Send the initial reply message to Telegram and store its message object
-    reply_message = await message.reply("")
-
-    full_response = " "
+    full_response = ""
+    reply_message = None  # Will hold the reply message object once it is sent
     last_update_time = asyncio.get_event_loop().time()
 
     async def on_message_callback(response_chunk):
-        nonlocal full_response, last_update_time
+        nonlocal full_response, reply_message, last_update_time
         try:
             # Parse the JSON response chunk
             response = json.loads(response_chunk)
@@ -175,22 +172,26 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             # Handle 'status' messages (e.g., "Processing started", "Completed")
             if 'status' in response:
                 if response['status'] == "Processing started":
-                    full_response += ""
+                    full_response += "Процесс начат...\n"
                 elif response['status'] == "Completed":
-                    full_response += ""
+                    full_response += "\nПроцесс завершен."
             
             # Handle 'result' chunks and accumulate them
             if 'result' in response:
                 full_response += response['result']
 
-            # Update the message every 2 seconds
-            current_time = asyncio.get_event_loop().time()
-            if current_time - last_update_time >= 2:
-                try:
-                    await reply_message.edit_text(full_response)
-                    last_update_time = current_time  # Update the last update time
-                except aiogram.utils.exceptions.MessageNotModified:
-                    pass  # Ignore if message content hasn't changed
+            # Send the initial message only after the first set of chunks is obtained
+            if reply_message is None and full_response:
+                reply_message = await message.reply(f"Ответ:\n{full_response}")
+            elif reply_message:
+                # Update the message every 2 seconds
+                current_time = asyncio.get_event_loop().time()
+                if current_time - last_update_time >= 2:
+                    try:
+                        await reply_message.edit_text(f"Ответ:\n{full_response}")
+                        last_update_time = current_time  # Update the last update time
+                    except aiogram.utils.exceptions.MessageNotModified:
+                        pass  # Ignore if message content hasn't changed
 
         except json.JSONDecodeError:
             pass  # If the chunk isn't a valid JSON, we skip it
@@ -199,7 +200,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
     await api_client.analyze_interview_message_websocket(interview_id, user_message, on_message_callback)
 
     # Final update after WebSocket communication is complete
-    if full_response:
+    if full_response and reply_message:
         try:
             await reply_message.edit_text(f"Ответ:\n{full_response}")
         except aiogram.utils.exceptions.MessageNotModified:
