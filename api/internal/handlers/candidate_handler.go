@@ -40,29 +40,15 @@ func (h *CandidateHandler) GetCandidateInfo(c *gin.Context) {
 }
 
 func (h *CandidateHandler) GetCandidateInfoByTgID(c *gin.Context) {
-	// Log all incoming parameters
-	for _, param := range c.Params {
-		log.Printf("Incoming request parameter: %s = %s", param.Key, param.Value)
-	}
+	tgIDStr := c.Param("candidate_id")
 
-	// Extract the Telegram ID from the request parameters
-	tgIDStr := c.Param("user_id")
-	log.Printf("Received request to fetch candidate info. Telegram ID: %s", tgIDStr)
-
-	// Fetch candidate info based on the provided Telegram ID
 	candidateInfo, err := h.candidateUsecase.GetCandidateInfoByTgID(tgIDStr)
 	if err != nil {
-		// Log the error
-		log.Printf("Error fetching candidate info for Telegram ID: %s, error: %v", tgIDStr, err)
-		// Respond with an internal server error
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch candidate info"})
 		return
 	}
 
-	// Log successful retrieval
-	log.Printf("Successfully fetched candidate info for Telegram ID: %s", tgIDStr)
-
-	// Return the candidate metadata as JSON (excluding the resume PDF)
+	// Return the candidate metadata as JSON (without the resume PDF)
 	c.JSON(http.StatusOK, candidateInfo)
 }
 
