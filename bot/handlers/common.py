@@ -69,21 +69,17 @@ async def handle_resume_document(message: types.Message):
     file_bytes = file.read()
     user_role = response.get("role", "none")
 
+    response = await api_client.upload_resume(
+        resume_file=file_bytes,
+        user_id=message.from_user.id
+    )
     # Handle based on user role
     if user_role == 'employee':
-        response = await api_client.upload_resume_employee(
-            resume_file=file_bytes,
-            user_id=message.from_user.id
-        )
         await message.reply(
             "Резюме успешно загружено. Вы можете отправить его на анализ во вкладке Список кандидатов -> Нужный кандидат" if response.get('success') else "Произошла ошибка при загрузке резюме.",
             reply_markup=employee_main_menu_keyboard()
         )
     elif user_role == 'candidate':
-        response = await api_client.upload_resume_candidate(
-            resume_file=file_bytes,
-            tg_id=message.from_user.id
-        )
         await message.reply(
             "Ваше резюме успешно загружено. Вы можете отправить его на анализ во вкладке Профиль." if response.get('success') else "Произошла ошибка при загрузке резюме.",
             reply_markup=candidate_main_menu_keyboard()

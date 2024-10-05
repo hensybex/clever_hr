@@ -36,7 +36,7 @@ class APIClient:
             async with session.get(url) as response:
                 return await response.json()
 
-    async def upload_resume_employee(self, resume_file, user_id):
+    async def upload_resume(self, resume_file, user_id):
         """
         Uploads a resume for a candidate by an employee (PDF).
         """
@@ -49,18 +49,6 @@ class APIClient:
             async with session.post(url, data=data) as response:
                 return await response.json()
 
-    async def upload_resume_candidate(self, resume_file, tg_id):
-        """
-        Allows a candidate to upload their own resume (PDF).
-        """
-        url = f"{self.base_url}/resumes/candidate"
-        data = aiohttp.FormData()
-        data.add_field('resume', resume_file, filename='resume.pdf', content_type='application/pdf')
-        data.add_field('tg_id', str(tg_id))
-
-        async with aiohttp.ClientSession() as session:
-            async with session.post(url, data=data) as response:
-                return await response.json()
 
     async def analyze_resume(self, resume_id):
         """
