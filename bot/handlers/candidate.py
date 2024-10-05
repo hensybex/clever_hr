@@ -205,10 +205,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
 
     # Final update after WebSocket communication is complete
     if full_response:
-        try:
-            await reply_message.edit_text(f"Ответ:\n{full_response}")
-        except aiogram.utils.exceptions.MessageNotModified:
-            pass
+        await reply_message.edit_text(f"Ответ:\n{full_response}")
 
 
 
