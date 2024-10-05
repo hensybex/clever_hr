@@ -153,6 +153,8 @@ async def start_interview(callback_query: types.CallbackQuery, state: FSMContext
     else:
         await callback_query.message.edit_text("Перед началом интервью, загрузите резюме и отправьте его на анализ.", reply_markup=candidate_main_menu_keyboard())
 
+
+
 @router.message(InterviewState.in_progress)
 async def handle_interview_message(message: types.Message, state: FSMContext):
     data = await state.get_data()
@@ -169,26 +171,19 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             # Parse the JSON response chunk
             response = json.loads(response_chunk)
             
-            # Handle 'status' messages (e.g., "Processing started", "Completed")
-            if 'status' in response:
-                if response['status'] == "Processing started":
-                    full_response += "Процесс начат...\n"
-                elif response['status'] == "Completed":
-                    full_response += "\nПроцесс завершен."
-            
             # Handle 'result' chunks and accumulate them
             if 'result' in response:
                 full_response += response['result']
 
             # Send the initial message only after the first set of chunks is obtained
             if reply_message is None and full_response:
-                reply_message = await message.reply(f"Ответ:\n{full_response}")
+                reply_message = await message.reply(full_response)  # Send only the full response
             elif reply_message:
                 # Update the message every 2 seconds
                 current_time = asyncio.get_event_loop().time()
                 if current_time - last_update_time >= 2:
                     try:
-                        await reply_message.edit_text(f"Ответ:\n{full_response}")
+                        await reply_message.edit_text(full_response)  # Update only with the full response
                         last_update_time = current_time  # Update the last update time
                     except aiogram.utils.exceptions.MessageNotModified:
                         pass  # Ignore if message content hasn't changed
@@ -202,10 +197,9 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
     # Final update after WebSocket communication is complete
     if full_response and reply_message:
         try:
-            await reply_message.edit_text(f"Ответ:\n{full_response}")
+            await reply_message.edit_text(full_response)
         except aiogram.utils.exceptions.MessageNotModified:
             pass
-
 
 
 
