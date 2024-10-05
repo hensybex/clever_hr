@@ -34,10 +34,17 @@ async def cmd_register_candidate(callback_query: types.CallbackQuery):
     response = await api_client.create_user(tg_id=user_id, user_type='candidate')
     logging.info(f"API Response for user registration: {response}")
     
-    await callback_query.message.answer(
-        "Вы успешно зарегистрировались как кандидат." if response.get('success') else "Вы уже зарегистрированы.",
-        reply_markup=employee_main_menu_keyboard()
-    )
+    if response.get('success'):
+        await callback_query.message.answer(
+            "Вы успешно зарегистрировались как кандидат.",
+            reply_markup=candidate_main_menu_keyboard()
+        )
+    else:
+        response = await api_client.switch_user_type(callback_query.from_user.id)
+        await callback_query.message.edit_text(
+            "Тип пользователя успешно изменен - кандидат",
+            reply_markup=candidate_main_menu_keyboard(),
+        )
 
 
 # Handle inline buttons for candidate main menu

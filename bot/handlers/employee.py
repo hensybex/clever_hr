@@ -20,6 +20,7 @@ logging.basicConfig(level=logging.INFO)
 
 router = Router()
 
+
 # Correct: Using callback_query for inline buttons
 @router.message(Command(commands=['employee']))
 async def cmd_register_employee(callback_query: types.CallbackQuery):
@@ -30,10 +31,17 @@ async def cmd_register_employee(callback_query: types.CallbackQuery):
     response = await api_client.create_user(tg_id=user_id, user_type='employee')
     logging.info(f"API Response for user registration: {response}")
     
-    await callback_query.message.answer(
-        "Вы успешно зарегистрировались как сотрудник." if response.get('success') else "Вы уже зарегистрированы.",
-        reply_markup=employee_main_menu_keyboard()
-    )
+    if response.get('success'):
+        await callback_query.message.answer(
+            "Вы успешно зарегистрировались как сотрудник.",
+            reply_markup=candidate_main_menu_keyboard()
+        )
+    else:
+        response = await api_client.switch_user_type(callback_query.from_user.id)
+        await callback_query.message.edit_text(
+            "Тип пользователя успешно изменен - сотрудник",
+            reply_markup=candidate_main_menu_keyboard(),
+        )
 
 # Inline button callbacks
 @router.callback_query(F.data == 'employee_main_menu')
