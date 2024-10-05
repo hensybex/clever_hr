@@ -96,6 +96,7 @@ class APIClient:
             async with session.get(url) as response:
                 return await response.json()
 
+    
     async def analyze_interview_message_websocket(self, interview_id, message, on_message_callback):
         """
         Establishes a WebSocket connection for real-time interview message analysis.

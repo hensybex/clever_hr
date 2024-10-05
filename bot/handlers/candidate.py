@@ -175,6 +175,11 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             if 'result' in response:
                 full_response += response['result']
 
+            # Handle the end of the interview
+            if 'status' in response and response['status'] == 'End of interview':
+                await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=main_menu)
+                return
+
             # Send the initial message only after the first set of chunks is obtained
             if reply_message is None and full_response:
                 reply_message = await message.reply(full_response)  # Send only the full response
@@ -200,6 +205,8 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
             await reply_message.edit_text(full_response)
         except aiogram.utils.exceptions.MessageNotModified:
             pass
+
+
 
 
 

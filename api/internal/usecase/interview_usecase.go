@@ -24,14 +24,15 @@ type InterviewUsecase interface {
 }
 
 type interviewUsecase struct {
-	interviewRepo     repository.InterviewRepository
-	interviewTypeRepo repository.InterviewTypeRepository
-	messageRepo       repository.InterviewMessageRepository
-	analysisRepo      repository.InterviewAnalysisResultRepository
-	resumeRepo        repository.ResumeRepository
-	userRepo          repository.UserRepository
-	candidateRepo     repository.CandidateRepository
-	mistralService    service.MistralService
+	interviewRepo            repository.InterviewRepository
+	interviewTypeRepo        repository.InterviewTypeRepository
+	messageRepo              repository.InterviewMessageRepository
+	analysisRepo             repository.InterviewAnalysisResultRepository
+	resumeRepo               repository.ResumeRepository
+	userRepo                 repository.UserRepository
+	candidateRepo            repository.CandidateRepository
+	mistralService           service.MistralService
+	interviewAnalysisUsecase InterviewAnalysisResultUsecase
 }
 
 func NewInterviewUsecase(
@@ -43,9 +44,18 @@ func NewInterviewUsecase(
 	userRepo repository.UserRepository,
 	candidateRepo repository.CandidateRepository,
 	mistralService service.MistralService,
+	interviewAnalysisUsecase InterviewAnalysisResultUsecase,
 ) InterviewUsecase {
 	return &interviewUsecase{
-		interviewRepo, interviewTypeRepo, messageRepo, analysisRepo, resumeRepo, userRepo, candidateRepo, mistralService,
+		interviewRepo,
+		interviewTypeRepo,
+		messageRepo,
+		analysisRepo,
+		resumeRepo,
+		userRepo,
+		candidateRepo,
+		mistralService,
+		interviewAnalysisUsecase,
 	}
 }
 
@@ -101,6 +111,18 @@ func (u *interviewUsecase) AnalyseInterviewMessageWebsocket(clientMsg dtos.Clien
 		return
 	}
 
+	// Check if the number of previous messages exceeds 6
+	if len(previousMessages) > 6 {
+		// End the interview if message count exceeds 6
+		conn.WriteJSON(dtos.ServerMessage{Status: "End of interview"})
+		// Trigger interview analysis
+		if _, err := u.RunFullInterviewAnalysis(uint(clientMsg.InterviewID)); err != nil {
+			log.Printf("Error triggering interview analysis: %v", err)
+		}
+		return
+	}
+
+	// Fetch the interview details
 	interview, err := u.interviewRepo.GetInterviewByID(uint(clientMsg.InterviewID))
 	if err != nil {
 		conn.WriteJSON(dtos.ServerMessage{Status: "Error getting interview"})
