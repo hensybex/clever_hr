@@ -113,8 +113,6 @@ class APIClient:
                     elif msg.type == aiohttp.WSMsgType.ERROR:
                         break
 
-            # After WebSocket closes, ensure final callback if needed
-            await on_message_callback('{"status": "End of interview"}')  # Trigger final callback
 
 
     async def switch_user_type(self, user_id):
