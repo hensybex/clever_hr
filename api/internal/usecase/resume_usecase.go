@@ -20,8 +20,7 @@ import (
 )
 
 type ResumeUsecase interface {
-	EmployeeUploadResume(resume *model.Resume, filePath string) error
-	CandidateUploadResume(resume *model.Resume, filePath string) error
+	UploadResume(resume *model.Resume, filePath string) error
 	RunResumeAnalysis(resumeID uint) (*model.ResumeAnalysisResult, error)
 	GetResumeAnalysisResult(resumeID uint) (*model.ResumeAnalysisResult, error)
 }
@@ -54,7 +53,7 @@ type CandidateData struct {
 	RewrittenResume string  `json:"RewrittenResume"`
 }
 
-func (u *resumeUsecase) EmployeeUploadResume(resume *model.Resume, filePath string) error {
+func (u *resumeUsecase) UploadResume(resume *model.Resume, filePath string) error {
 	// Log the start of the function and input parameters
 	log.Printf("Starting EmployeeUploadResume. filePath: %s, resume ID: %v, uploaded by user ID: %v", filePath, resume.ID, resume.UploadedByUserID)
 
@@ -105,19 +104,16 @@ func (u *resumeUsecase) EmployeeUploadResume(resume *model.Resume, filePath stri
 
 	// Parse total years of experience
 	totalYearsStr := candidateData.TotalYears
-	/* var totalYears int
-	if totalYearsStr != nil && *totalYearsStr != "" {
-		var err error
-		totalYears, err = strconv.Atoi(*totalYearsStr)
-		if err != nil {
-			log.Printf("Error converting TotalYears to int. raw value: %s, error: %v", *totalYearsStr, err)
-			return fmt.Errorf("error converting TotalYears to int: %v", err)
-		}
-		log.Printf("Total years of experience parsed successfully. Total years: %d", totalYears)
-	} */
 
 	// Get user by Telegram ID
-	telegramID := strconv.FormatUint(uint64(*resume.UploadedByUserID), 10)
+	var telegramID string
+	if resume.UploadedByUserID != nil {
+
+		telegramID = strconv.FormatUint(uint64(*resume.UploadedByUserID), 10)
+	} else {
+
+		telegramID = strconv.FormatUint(uint64(resume.CandidateID), 10)
+	}
 	log.Printf("Fetching user by Telegram ID: %s", telegramID)
 	user, err := u.userRepo.GetUserByID(*resume.UploadedByUserID)
 	if err != nil {
@@ -159,35 +155,6 @@ func (u *resumeUsecase) EmployeeUploadResume(resume *model.Resume, filePath stri
 	log.Printf("EmployeeUploadResume completed successfully for Resume ID: %v", resume.ID)
 
 	return nil
-}
-
-func (u *resumeUsecase) CandidateUploadResume(resume *model.Resume, filePath string) error {
-	// Extract text from PDF
-	extractedText, err := u.extractTextFromPDF(filePath)
-	if err != nil {
-		return err
-	}
-
-	// Construct LLM prompt
-	allPrompts := prompts.NewPrompts()
-	pc := prompts.NewPromptConstructor()
-	dialogData := prompts_storage.ResumeRewritionData{ResumeText: extractedText}
-	prompt, err := pc.GetPrompt(allPrompts.ResumeRewritionPrompt, dialogData, "", true)
-	if err != nil {
-		return fmt.Errorf("error generating LLM prompt: %v", err)
-	}
-
-	// Call LLM to rewrite the resume in a structured format
-	rewrittenResume, gptCallID, err := u.mistralService.CallMistral(prompt, true, service.Nemo, "ResumeRewrition", 0)
-	if err != nil {
-		return fmt.Errorf("error calling LLM: %v", err)
-	}
-
-	// Save the extracted text and rewritten resume in the database
-	resume.TextExtracted = extractedText
-	resume.GPTCallID = &gptCallID            // Save the GPT call ID for future reference
-	resume.RewrittenResume = rewrittenResume // Save the LLM output as the formatted resume
-	return u.resumeRepo.CreateResume(resume)
 }
 
 // Extract text from the PDF file using pdftotext
