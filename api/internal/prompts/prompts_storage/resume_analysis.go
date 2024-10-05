@@ -24,7 +24,7 @@ var ResumeAnalysisPrompt = types.Prompt{
 1. **Analyze the provided "Resume Text".**
 
 2. **For each of the following 10 categories, you must:**
-   - **Provide a concise, insightful text overview** summarizing the candidate's strengths and relevant details specific to that category.
+   - **Provide a concise, insightful text overview** summarizing the candidate's strengths and relevant details specific to that category. Text overviews should be written in Russian language.
    - **Assign a score between 1 and 10** indicating the candidate's proficiency, suitability, or alignment in that category, where 1 represents the lowest level and 10 the highest.
 
 3. **Categories to analyze:**
