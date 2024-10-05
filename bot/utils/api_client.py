@@ -40,7 +40,7 @@ class APIClient:
         """
         Uploads a resume for a candidate by an employee (PDF).
         """
-        url = f"{self.base_url}/resumes/employee"
+        url = f"{self.base_url}/resumes/upload"
         data = aiohttp.FormData()
         data.add_field('resume', resume_file, filename='resume.pdf', content_type='application/pdf')
         data.add_field('tg_id', str(user_id))
