@@ -13,6 +13,10 @@ from keyboards.candidate import (
     interview_keyboard
 )
 
+from keyboards.employee import (
+    employee_main_menu_keyboard,
+)
+
 router = Router()
 
 class InterviewState(StatesGroup):
@@ -112,5 +116,5 @@ async def switch_user_type(callback_query: types.CallbackQuery):
     response = await api_client.switch_user_type(callback_query.from_user.id)
     await callback_query.message.edit_text(
         response.get('message', "Ошибка при смене типа пользователя."),
-        reply_markup=None if response.get('message') else candidate_main_menu_keyboard()
+        reply_markup=employee_main_menu_keyboard() if response.get('message') else candidate_main_menu_keyboard()
     )
