@@ -20,10 +20,23 @@ router = Router()
 
 @router.message(CommandStart())
 async def cmd_start(message: types.Message):
-    await message.answer(
-        "Добро пожаловать в бот для анализа резюме!",
-        reply_markup=start_keyboard()
-    )
+    user_role = await api_client.get_user_role(tg_id=message.from_user.id)
+    message = "Добро пожаловать в бот для анализа резюме!",
+    if user_role == 'employee':
+        await message.answer(
+            message,
+            reply_markup=employee_main_menu_keyboard()
+        )
+    elif user_role == 'candidate':
+        await message.answer(
+            message,
+            reply_markup=candidate_main_menu_keyboard()
+        )
+    else:
+        await message.answer(
+            message,
+            reply_markup=start_keyboard()
+        )
 
 @router.callback_query(F.data.startswith("register_"))
 async def process_register_callback(callback_query: types.CallbackQuery):
@@ -43,7 +56,7 @@ async def process_register_callback(callback_query: types.CallbackQuery):
 @router.message(F.document.mime_type == 'application/pdf')
 async def handle_resume_document(message: types.Message):
     # Retrieve the user role from the API, database, or context (this is just an example, you can adjust it)
-    user_role = await api_client.get_user_role(tg_id=message.from_user.id)  # Assume this returns 'employee' or 'candidate'
+    user_role = await api_client.get_user_role(tg_id=message.from_user.id)
 
     # Download the file
     file_info = await message.bot.get_file(message.document.file_id)
