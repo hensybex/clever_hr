@@ -97,6 +97,7 @@ class APIClient:
                 return await response.json()
 
     
+    
     async def analyze_interview_message_websocket(self, interview_id, message, on_message_callback):
         """
         Establishes a WebSocket connection for real-time interview message analysis.
@@ -111,6 +112,10 @@ class APIClient:
                         await on_message_callback(msg.data)
                     elif msg.type == aiohttp.WSMsgType.ERROR:
                         break
+
+            # After WebSocket closes, ensure final callback if needed
+            await on_message_callback('{"status": "End of interview"}')  # Trigger final callback
+
 
     async def switch_user_type(self, user_id):
         """
