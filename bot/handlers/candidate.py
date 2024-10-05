@@ -1,5 +1,6 @@
 # handlers/candidate.py
 
+import asyncio
 from aiogram import types, Router, F
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
@@ -157,17 +158,34 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
     interview_id = data.get('interview_id')
     user_message = message.text
 
-    # Send the initial response message to Telegram and hold the message object
+    # Send the initial reply message to Telegram and store its message object
     reply_message = await message.reply("Ответ:\n")
 
     full_response = ""
+    last_update_time = asyncio.get_event_loop().time()  # To manage periodic updates
 
     async def on_message_callback(response_chunk):
-        nonlocal full_response
-        full_response += response_chunk  # Accumulate the response chunks
+        nonlocal full_response, last_update_time
+        full_response += response_chunk  # Accumulate response chunks
 
-    # Start the WebSocket communication
-    await api_client.analyze_interview_message_websocket(interview_id, user_message, on_message_callback, reply_message)
+        # Update the message every 2 seconds
+        current_time = asyncio.get_event_loop().time()
+        if current_time - last_update_time >= 2:
+            try:
+                await reply_message.edit_text(f"Ответ:\n{full_response}")
+                last_update_time = current_time  # Update the last update time
+            except aiogram.utils.exceptions.MessageNotModified:
+                pass  # Ignore if message content hasn't changed
+
+    # Start the WebSocket interaction and message handling
+    await api_client.analyze_interview_message_websocket(interview_id, user_message, on_message_callback)
+
+    # Final update after WebSocket communication is complete
+    if full_response:
+        try:
+            await reply_message.edit_text(f"Ответ:\n{full_response}")
+        except aiogram.utils.exceptions.MessageNotModified:
+            pass
 
 
 # Stop the interview
