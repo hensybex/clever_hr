@@ -11,6 +11,7 @@ import (
 	"clever_hr_api/internal/service"
 	"errors"
 	"log"
+	"strconv"
 
 	"github.com/gorilla/websocket"
 )
@@ -28,6 +29,8 @@ type interviewUsecase struct {
 	messageRepo       repository.InterviewMessageRepository
 	analysisRepo      repository.InterviewAnalysisResultRepository
 	resumeRepo        repository.ResumeRepository
+	userRepo          repository.UserRepository
+	candidateRepo     repository.CandidateRepository
 	mistralService    service.MistralService
 }
 
@@ -37,10 +40,12 @@ func NewInterviewUsecase(
 	messageRepo repository.InterviewMessageRepository,
 	analysisRepo repository.InterviewAnalysisResultRepository,
 	resumeRepo repository.ResumeRepository,
+	userRepo repository.UserRepository,
+	candidateRepo repository.CandidateRepository,
 	mistralService service.MistralService,
 ) InterviewUsecase {
 	return &interviewUsecase{
-		interviewRepo, interviewTypeRepo, messageRepo, analysisRepo, resumeRepo, mistralService,
+		interviewRepo, interviewTypeRepo, messageRepo, analysisRepo, resumeRepo, userRepo, candidateRepo, mistralService,
 	}
 }
 
@@ -51,7 +56,15 @@ func NewInterviewUsecase(
 
 func (u *interviewUsecase) CreateInterview(interviewDTO dtos.CreateInterviewDTO) error {
 	// Check if the user has uploaded a resume based on tg_id
-	resume, err := u.resumeRepo.GetResumeByTgID(interviewDTO.TgID)
+	user, err := u.userRepo.GetUserByTgID(strconv.FormatUint(uint64(interviewDTO.TgID), 10))
+	if err != nil {
+		return err
+	}
+	candidate, err := u.candidateRepo.GetCandidateByUploadedID(user.ID)
+	if err != nil {
+		return err
+	}
+	resume, err := u.resumeRepo.GetResumeByCandidateID(candidate.ID)
 	if err != nil {
 		return err
 	}

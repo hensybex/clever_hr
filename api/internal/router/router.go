@@ -43,7 +43,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	userUsecase := usecase.NewUserUsecase(userRepo)
 	candidateUsecase := usecase.NewCandidateUsecase(candidateRepo, resumeRepo, userRepo, resumeAnalysisResultRepo)
 	resumeUsecase := usecase.NewResumeUsecase(resumeRepo, resumeAnalysisResultRepo, candidateRepo, userRepo, *mistralService)
-	interviewUsecase := usecase.NewInterviewUsecase(interviewRepo, interviewTypeRepo, interviewMessageRepo, interviewAnalysisResultRepo, resumeRepo, *mistralService)
+	interviewUsecase := usecase.NewInterviewUsecase(interviewRepo, interviewTypeRepo, interviewMessageRepo, interviewAnalysisResultRepo, resumeRepo, userRepo, candidateRepo, *mistralService)
 	interviewTypeUsecase := usecase.NewInterviewTypeUsecase(interviewTypeRepo)
 	resumeAnalysisResultUsecase := usecase.NewResumeAnalysisResultUsecase(resumeAnalysisResultRepo, candidateRepo, resumeRepo)
 
