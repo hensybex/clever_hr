@@ -170,6 +170,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
         try:
             # Parse the JSON response chunk
             response = json.loads(response_chunk)
+            logging.info(response)
             
             # Handle 'result' chunks and accumulate them
             if 'result' in response:
@@ -177,6 +178,7 @@ async def handle_interview_message(message: types.Message, state: FSMContext):
 
             # Handle the end of the interview
             if 'status' in response and response['status'] == 'End of interview':
+                logging.info("WTF WHY AM I HERE???")
                 await message.reply("Спасибо за ваше участие! Возвращаемся в главное меню.", reply_markup=candidate_main_menu_keyboard())
                 return
 
