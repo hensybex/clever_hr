@@ -41,7 +41,7 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	// Initialize use cases
 	userUsecase := usecase.NewUserUsecase(userRepo)
-	candidateUsecase := usecase.NewCandidateUsecase(candidateRepo, resumeRepo, userRepo, resumeAnalysisResultRepo)
+	candidateUsecase := usecase.NewCandidateUsecase(candidateRepo, resumeRepo, userRepo, resumeAnalysisResultRepo, interviewRepo, interviewAnalysisResultRepo)
 	resumeUsecase := usecase.NewResumeUsecase(resumeRepo, resumeAnalysisResultRepo, candidateRepo, userRepo, *mistralService)
 	interviewUsecase := usecase.NewInterviewUsecase(interviewRepo, interviewTypeRepo, interviewMessageRepo, interviewAnalysisResultRepo, resumeRepo, userRepo, candidateRepo, *mistralService)
 	interviewTypeUsecase := usecase.NewInterviewTypeUsecase(interviewTypeRepo)
