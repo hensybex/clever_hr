@@ -171,7 +171,7 @@ async def check_resume_analysis(callback_query: types.CallbackQuery):
         await callback_query.message.edit_text(f"Не удалось загрузить результаты анализа: {str(e)}")
 
     
-@router.callback_query(F.data.startswith('check_interview_analysis_'))
+""" @router.callback_query(F.data.startswith('check_interview_analysis_'))
 async def check_resume_analysis(callback_query: types.CallbackQuery):
     # Extract resume_id from the callback data
     response = await api_client.get_user_role(tg_id = callback_query.from_user.id)
@@ -248,7 +248,7 @@ async def check_resume_analysis(callback_query: types.CallbackQuery):
         logging.error("Error fetching resume analysis: %s", str(e))
         
         # Handle potential errors (e.g., invalid resume_id or server issues)
-        await callback_query.message.edit_text(f"Не удалось загрузить результаты анализа: {str(e)}")
+        await callback_query.message.edit_text(f"Не удалось загрузить результаты анализа: {str(e)}") """
 
 
 @router.callback_query(F.data.startswith('check_interview_analysis_'))

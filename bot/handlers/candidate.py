@@ -115,6 +115,8 @@ async def candidate_profile(callback_query: types.CallbackQuery):
         resume_id = candidate_info.get('resume_id')
         resume_was_analyzed = candidate_info.get('was_resume_analysed')
         interview_id = candidate_info.get('interview_id')
+        logging.info("BEFORE MOVE TO CANDIDATE PROFILE KEYBOARD")
+        logging.info(interview_id)
         keyboard = candidate_profile_keyboard(candidate_id, resume_id, resume_url, resume_was_analyzed, interview_id)
         
         # Send candidate info with the button to download resume
