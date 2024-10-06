@@ -114,7 +114,7 @@ func (h *InterviewHandler) RunFullInterviewAnalysis(c *gin.Context) {
 
 }
 
-func (h *InterviewHandler) GetInterviewAnalysisResult(c *gin.Context) {
+func (h *InterviewHandler) GetInterviewAnalysisResultByInterviewID(c *gin.Context) {
 	interviewIDStr := c.Param("interview_id")
 	interviewID, err := strconv.Atoi(interviewIDStr)
 	if err != nil {
@@ -123,6 +123,23 @@ func (h *InterviewHandler) GetInterviewAnalysisResult(c *gin.Context) {
 	}
 
 	result, err := h.interviewUsecase.GetInterviewAnalysisResult(uint(interviewID))
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Interview analysis result not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "result": result})
+}
+
+func (h *InterviewHandler) GetInterviewAnalysisResult(c *gin.Context) {
+	interviewIDStr := c.Param("interview_id")
+	interviewID, err := strconv.Atoi(interviewIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid interview ID"})
+		return
+	}
+
+	result, err := h.interviewUsecase.GetOneByID(uint(interviewID))
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Interview analysis result not found"})
 		return

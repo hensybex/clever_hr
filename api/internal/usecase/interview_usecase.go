@@ -23,6 +23,7 @@ type InterviewUsecase interface {
 	AnalyseInterviewMessageWebsocket(clientMsg dtos.ClientMessage, conn *websocket.Conn)
 	RunFullInterviewAnalysis(interviewID uint) (*model.InterviewAnalysisResult, error)
 	GetInterviewAnalysisResult(interviewID uint) (*model.InterviewAnalysisResult, error)
+	GetOneByID(interviewAnalysisResultID uint) (*model.InterviewAnalysisResult, error)
 }
 
 type interviewUsecase struct {
@@ -255,4 +256,8 @@ func (u *interviewUsecase) RunFullInterviewAnalysis(interviewID uint) (*model.In
 
 func (u *interviewUsecase) GetInterviewAnalysisResult(interviewID uint) (*model.InterviewAnalysisResult, error) {
 	return u.analysisRepo.GetInterviewAnalysisResultByInterviewID(interviewID)
+}
+
+func (u *interviewUsecase) GetOneByID(interviewAnalysisResultID uint) (*model.InterviewAnalysisResult, error) {
+	return u.analysisRepo.GetOneByID(interviewAnalysisResultID)
 }

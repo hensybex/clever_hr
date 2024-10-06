@@ -10,6 +10,7 @@ import (
 type InterviewAnalysisResultRepository interface {
 	CreateInterviewAnalysisResult(result *model.InterviewAnalysisResult) error
 	GetInterviewAnalysisResultByInterviewID(interviewID uint) (*model.InterviewAnalysisResult, error)
+	GetOneByID(id uint) (*model.InterviewAnalysisResult, error)
 }
 
 type interviewResultRepository struct {
@@ -31,4 +32,13 @@ func (r *interviewResultRepository) GetInterviewAnalysisResultByInterviewID(inte
 		return nil, err
 	}
 	return &result, nil
+}
+
+func (r *interviewResultRepository) GetOneByID(id uint) (*model.InterviewAnalysisResult, error) {
+	var interviewAnalysisResult model.InterviewAnalysisResult
+	err := r.db.First(&interviewAnalysisResult, id).Error
+	if err != nil {
+		return nil, err
+	}
+	return &interviewAnalysisResult, nil
 }
