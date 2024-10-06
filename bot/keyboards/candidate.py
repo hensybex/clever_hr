@@ -29,14 +29,18 @@ def candidate_resume_analysis_keyboard() -> InlineKeyboardMarkup:
 def candidate_profile_keyboard(candidate_id: int, resume_id: int, resume_url: str = None, resume_was_analyzed: bool = False, interview_id: int = 0) -> InlineKeyboardMarkup:
     keyboard_builder = InlineKeyboardBuilder()
     keyboard_builder.add(InlineKeyboardButton(text="Назад", callback_data=f"candidate_main_menu"))
+    
     if resume_url:
-        keyboard_builder.add([InlineKeyboardButton(text="Скачать резюме", callback_data=f"download_resume_{candidate_id}")])
+        keyboard_builder.add(InlineKeyboardButton(text="Скачать резюме", callback_data=f"download_resume_{candidate_id}"))
         if resume_was_analyzed:
-            keyboard_builder.add([InlineKeyboardButton(text="Посмотреть результаты анализа резюме", callback_data=f"check_resume_analysis_{resume_id}")])
+            keyboard_builder.add(InlineKeyboardButton(text="Посмотреть результаты анализа резюме", callback_data=f"check_resume_analysis_{resume_id}"))
         else:
-            keyboard_builder.add([InlineKeyboardButton(text="Запустить анализ резюме", callback_data=f"run_resume_analysis_{resume_id}")])
+            keyboard_builder.add(InlineKeyboardButton(text="Запустить анализ резюме", callback_data=f"run_resume_analysis_{resume_id}"))
+    
     if interview_id != 0:
-        keyboard_builder.add([InlineKeyboardButton(text="Посмотреть результаты анализа интервью", callback_data=f"check_interview_analysis_{interview_id}")])
+        keyboard_builder.add(InlineKeyboardButton(text="Посмотреть результаты анализа интервью", callback_data=f"check_interview_analysis_{interview_id}"))
+    
+    return keyboard_builder.as_markup()
 
 
 def before_interview_keyboard(interview_types: list, page: int =1) -> InlineKeyboardMarkup:
