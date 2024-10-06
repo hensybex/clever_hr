@@ -36,7 +36,7 @@ async def cmd_analyze_interview(message: types.Message):
         "Анализ интервью начат." if response.get('success') else "Ошибка при запуске анализа интервью."
     )
 
-@router.message(Command(commands=['get_interview_analysis']))
+""" @router.message(Command(commands=['get_interview_analysis']))
 async def cmd_get_interview_analysis_result(message: types.Message):
     args = message.get_args()
     if not args:
@@ -50,3 +50,4 @@ async def cmd_get_interview_analysis_result(message: types.Message):
         await message.reply(f"Результаты анализа интервью:\n{response['result']}")
     else:
         await message.reply("Анализ интервью еще не завершен.")
+ """

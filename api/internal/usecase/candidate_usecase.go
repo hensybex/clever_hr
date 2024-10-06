@@ -19,10 +19,12 @@ type CandidateUsecase interface {
 }
 
 type candidateUsecase struct {
-	candidateRepo            repository.CandidateRepository
-	resumeRepo               repository.ResumeRepository
-	userRepo                 repository.UserRepository
-	resumeAnalysisResultRepo repository.ResumeAnalysisResultRepository
+	candidateRepo               repository.CandidateRepository
+	resumeRepo                  repository.ResumeRepository
+	userRepo                    repository.UserRepository
+	resumeAnalysisResultRepo    repository.ResumeAnalysisResultRepository
+	interviewRepo               repository.InterviewRepository
+	interviewAnalysisResultRepo repository.InterviewAnalysisResultRepository
 }
 
 func NewCandidateUsecase(
@@ -30,12 +32,16 @@ func NewCandidateUsecase(
 	resumeRepo repository.ResumeRepository,
 	userRepo repository.UserRepository,
 	resumeAnalysisResultRepo repository.ResumeAnalysisResultRepository,
+	interviewRepo repository.InterviewRepository,
+	interviewAnalysisResultRepo repository.InterviewAnalysisResultRepository,
 ) CandidateUsecase {
 	return &candidateUsecase{
-		candidateRepo:            candidateRepo,
-		resumeRepo:               resumeRepo,
-		userRepo:                 userRepo,
-		resumeAnalysisResultRepo: resumeAnalysisResultRepo,
+		candidateRepo:               candidateRepo,
+		resumeRepo:                  resumeRepo,
+		userRepo:                    userRepo,
+		resumeAnalysisResultRepo:    resumeAnalysisResultRepo,
+		interviewRepo:               interviewRepo,
+		interviewAnalysisResultRepo: interviewAnalysisResultRepo,
 	}
 }
 
@@ -116,12 +122,25 @@ func (u *candidateUsecase) GetCandidateInfoByTgID(tgID string) (*dtos.CandidateI
 		return nil, fmt.Errorf("error fetching resume analysis result: %v", err)
 	}
 
+	interview, err := u.interviewRepo.GetInterviewByResumeID(resume.ID)
+	if err != nil {
+		log.Printf("ERROR: Error fetching interview by resume ID: %d. Error: %v", resume.ID, err)
+		return nil, fmt.Errorf("error fetching resume analysis result: %v", err)
+	}
+
+	interviewAnalysisResults, err := u.interviewAnalysisResultRepo.GetInterviewAnalysisResultByInterviewID(interview.ID)
+	if err != nil {
+		log.Printf("ERROR: Error fetching interview analysis results by interview ID: %d. Error: %v", interview.ID, err)
+		return nil, fmt.Errorf("error fetching interview analysis result: %v", err)
+	}
+
 	// Combine the data into a single struct and return
 	candidateInfo := &dtos.CandidateInfo{
-		Candidate:         *candidate,
-		ResumePDF:         resume.ResumePDF,
-		ResumeID:          resume.ID,
-		WasResumeAnalysed: wasResumeAnalysed,
+		Candidate:                 *candidate,
+		ResumePDF:                 resume.ResumePDF,
+		ResumeID:                  resume.ID,
+		WasResumeAnalysed:         wasResumeAnalysed,
+		InterviewAnalysisResultID: interviewAnalysisResults.ID,
 	}
 	log.Printf("INFO: Successfully combined candidate info, resume, and analysis result for candidate ID: %d", candidate.ID)
 

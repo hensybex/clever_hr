@@ -11,6 +11,7 @@ type InterviewRepository interface {
 	CreateInterview(interview *model.Interview) error
 	GetInterviewByID(id uint) (*model.Interview, error)
 	UpdateInterviewStatus(id uint, status string) error
+	GetInterviewByResumeID(resumeID uint) (*model.Interview, error)
 }
 
 type interviewRepository struct {
@@ -36,4 +37,13 @@ func (r *interviewRepository) GetInterviewByID(id uint) (*model.Interview, error
 
 func (r *interviewRepository) UpdateInterviewStatus(id uint, status string) error {
 	return r.db.Model(&model.Interview{}).Where("id = ?", id).Update("status", status).Error
+}
+
+func (r *interviewRepository) GetInterviewByResumeID(resumeID uint) (*model.Interview, error) {
+	var interview model.Interview
+	err := r.db.Where("resume_id = ?", resumeID).Order("created_at DESC").First(&interview).Error
+	if err != nil {
+		return nil, err
+	}
+	return &interview, nil
 }
