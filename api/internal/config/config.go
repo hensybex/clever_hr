@@ -1,4 +1,5 @@
-// config.go
+// internal/config/config.go
+
 package config
 
 import (
@@ -8,7 +9,6 @@ import (
 
 type Config struct {
 	DatabaseURL string
-	SearxngURL  string
 }
 
 func LoadConfig() (*Config, error) {
@@ -22,10 +22,7 @@ func LoadConfig() (*Config, error) {
 	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		user, password, host, port, dbName, sslMode)
 
-	searxngURL := os.Getenv("SEARXNG_URL")
-
 	return &Config{
 		DatabaseURL: databaseURL,
-		SearxngURL:  searxngURL,
 	}, nil
 }

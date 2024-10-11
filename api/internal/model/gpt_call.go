@@ -1,4 +1,5 @@
 // internal/model/gpt_call.go
+
 package model
 
 import (

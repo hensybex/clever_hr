@@ -1,4 +1,5 @@
-// internal/service/mistral_service.go
+// internal/service/format_messages.go
+
 package service
 
 import (

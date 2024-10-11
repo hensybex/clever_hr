@@ -1,3 +1,5 @@
+# restart_api_prod.sh
+
 #!/bin/bash
 
 # Function to handle cleanup and stopping of logs on script termination

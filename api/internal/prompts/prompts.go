@@ -1,4 +1,5 @@
 // internal/prompts/prompts.go
+
 package prompts
 
 import (

@@ -1,3 +1,5 @@
+// internal/model/interview_type.go
+
 package model
 
 import (

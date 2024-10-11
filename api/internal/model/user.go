@@ -15,8 +15,9 @@ const (
 
 type User struct {
 	ID        uint     `gorm:"primaryKey"`
-	TgID      string   `gorm:"uniqueIndex"`
-	UserType  UserType `gorm:"type:varchar(20)"` // Change to varchar
+	UserType  UserType `gorm:"type:varchar(20)"`
+	Username  string   `gorm:"unique;not null"`
+	Password  string   `gorm:"not null"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }

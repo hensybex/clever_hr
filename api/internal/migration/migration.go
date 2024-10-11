@@ -6,6 +6,7 @@ import (
 	"clever_hr_api/internal/model"
 	"log"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -39,6 +40,25 @@ func ApplyCustomMigrations(db *gorm.DB) error {
 		if err := db.FirstOrCreate(&interviewType, model.InterviewType{Name: interviewType.Name}).Error; err != nil {
 			return err
 		}
+	}
+
+	// Define default user credentials (you should hash the password)
+	defaultUsername := "admin"
+	defaultPassword := "admin123"
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(defaultPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	// Define the default user
+	defaultUser := model.User{
+		Username: defaultUsername,
+		Password: string(hashedPassword), // Store hashed password
+	}
+
+	// Apply user migration (check if user already exists by username)
+	if err := db.FirstOrCreate(&defaultUser, model.User{Username: defaultUsername}).Error; err != nil {
+		return err
 	}
 
 	log.Println("Custom migrations applied successfully.")

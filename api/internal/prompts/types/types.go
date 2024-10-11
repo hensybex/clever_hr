@@ -1,4 +1,5 @@
 // internal/prompts/types/types.go
+
 package types
 
 // PassedData represents the structure of data passed to the prompt
