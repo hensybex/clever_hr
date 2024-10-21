@@ -1,6 +1,8 @@
 # Clever HR App
 
-Этот репозиторий содержит Clever HR App, который включает Flutter веб-приложение и Go API, а также базы данных PostgreSQL и Milvus.## Предварительные требования- Docker
+Этот репозиторий содержит Clever HR App, который включает Flutter веб-приложение и Go API, а также базы данных PostgreSQL и Milvus.
+
+## Предварительные требования- Docker
 - Docker Compose
 
 ## Установка
