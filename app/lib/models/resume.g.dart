@@ -70,8 +70,5 @@ class ResumeAdapter extends TypeAdapter<Resume> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ResumeAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is ResumeAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

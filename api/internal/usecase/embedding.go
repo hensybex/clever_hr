@@ -1,4 +1,4 @@
-// usecase/embedding_usecase.go
+// internal/usecase/embedding.go
 
 package usecase
 

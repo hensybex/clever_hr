@@ -1,4 +1,4 @@
-// usecase/vacancy.go
+// internal/usecase/vacancy.go
 
 package usecase
 

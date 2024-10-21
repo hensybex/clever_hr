@@ -1,4 +1,4 @@
-// handlers/auth.go
+// internal/handlers/auth.go
 
 package handlers
 

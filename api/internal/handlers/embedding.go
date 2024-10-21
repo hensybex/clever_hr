@@ -1,4 +1,4 @@
-// handlers/embedding_handler.go
+// internal/handlers/embedding.go
 
 package handlers
 

@@ -1,4 +1,4 @@
-// repository/embedding.go
+// internal/repository/embedding.go
 
 package repository
 

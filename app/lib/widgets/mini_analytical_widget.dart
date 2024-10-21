@@ -1,29 +1,20 @@
-// widgets/mini_analytical_widget.dart
+// lib/widgets/mini_analytical_widget.dart
 
 import 'package:app/utils/locales.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import '../models/vacancy_resume_match.dart';
-
 class MiniAnalyticalWidget extends StatefulWidget {
   final VacancyResumeMatch resumeMatch;
-
   const MiniAnalyticalWidget({super.key, required this.resumeMatch});
-
   @override
   MiniAnalyticalWidgetState createState() => MiniAnalyticalWidgetState();
 }
-
 class MiniAnalyticalWidgetState extends State<MiniAnalyticalWidget> {
-  // This will hold the name of the metric and score being hovered
   String? _hoveredMetric;
-
-  // This will hold the score of the hovered metric
   int? _hoveredScore;
-
   @override
   Widget build(BuildContext context) {
-    // Retrieve the scores for the 10 metrics
     List<int> scores = [
       widget.resumeMatch.relevantWorkExperience.score,
       widget.resumeMatch.technicalSkillsAndProficiencies.score,
@@ -36,17 +27,13 @@ class MiniAnalyticalWidgetState extends State<MiniAnalyticalWidget> {
       widget.resumeMatch.motivationAndCareerObjectives.score,
       widget.resumeMatch.additionalQualificationsAndValueAdds.score,
     ];
-
     // Define the maximum possible score
     const int maxScore = 15;
-
     // Calculate the total score
     int totalScore = scores.reduce((a, b) => a + b);
-
     return LayoutBuilder(
       builder: (context, constraints) {
         double availableHeight = constraints.maxHeight;
-
         return SizedBox(
           height: availableHeight,
           child: Column(
@@ -62,7 +49,6 @@ class MiniAnalyticalWidgetState extends State<MiniAnalyticalWidget> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: List.generate(scores.length, (index) {
                           double barHeight = (scores[index] / maxScore) * availableHeight;
-
                           return Flexible(
                             child: MouseRegion(
                               onEnter: (_) {
@@ -119,7 +105,6 @@ class MiniAnalyticalWidgetState extends State<MiniAnalyticalWidget> {
       },
     );
   }
-
   String _getMetricNameByIndex(BuildContext context, int index) {
     switch (index) {
       case 0:

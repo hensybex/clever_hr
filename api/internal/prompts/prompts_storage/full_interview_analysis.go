@@ -1,4 +1,4 @@
-// prompts/prompts_storage/full_interview_analysis.go
+// internal/prompts/prompts_storage/full_interview_analysis.go
 
 package prompts_storage
 

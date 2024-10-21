@@ -1,4 +1,4 @@
-// service/similarity.go
+// internal/service/similarity.go
 
 package service
 

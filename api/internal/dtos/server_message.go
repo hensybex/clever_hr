@@ -1,4 +1,4 @@
-// dtos/server_message.go
+// internal/dtos/server_message.go
 
 package dtos
 

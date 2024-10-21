@@ -1,4 +1,4 @@
-// model/vacancy_resume_match.go
+// internal/model/vacancy_resume_match.go
 
 package model
 

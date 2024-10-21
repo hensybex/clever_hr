@@ -1,4 +1,4 @@
-// usecase/user.go
+// internal/usecase/user.go
 
 package usecase
 

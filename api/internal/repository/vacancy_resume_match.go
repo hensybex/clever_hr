@@ -1,4 +1,4 @@
-// repository/vacancy_resume_match.go
+// internal/repository/vacancy_resume_match.go
 
 package repository
 

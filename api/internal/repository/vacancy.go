@@ -1,4 +1,4 @@
-// repository/vacancy.go
+// internal/repository/vacancy.go
 
 package repository
 

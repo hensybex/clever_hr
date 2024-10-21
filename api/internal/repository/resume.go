@@ -1,4 +1,4 @@
-// repository/resume.go
+// internal/repository/resume.go
 
 package repository
 

@@ -1,6 +1,5 @@
-// models/hive_type_ids.dart
-
 // lib/models/hive_type_ids.dart
+
 class HiveTypeIds {
   static const int userToken = 0;
   static const int vacancy = 1;

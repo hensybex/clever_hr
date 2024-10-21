@@ -1,4 +1,4 @@
-// handlers/match.go
+// internal/handlers/match.go
 
 package handlers
 

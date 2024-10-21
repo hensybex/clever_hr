@@ -1,4 +1,4 @@
-// repository/qualification.go
+// internal/repository/qualification.go
 
 package repository
 

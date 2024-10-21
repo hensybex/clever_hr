@@ -1,4 +1,4 @@
-// prompts/prompts_storage/detect_group_vacancy.go
+// internal/prompts/prompts_storage/detect_group_vacancy.go
 
 package prompts_storage
 

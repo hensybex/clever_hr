@@ -1,4 +1,4 @@
-// prompts/prompts_storage/standardize_vacancy.go
+// internal/prompts/prompts_storage/standardize_vacancy.go
 
 package prompts_storage
 

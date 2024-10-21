@@ -1,4 +1,4 @@
-// prompts/prompts_storage/standardize_resume.go
+// internal/prompts/prompts_storage/standardize_resume.go
 
 package prompts_storage
 

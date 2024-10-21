@@ -1,51 +1,36 @@
-// models/resume.dart
+// lib/models/resume.dart
 
 import 'package:hive/hive.dart';
 import 'hive_type_ids.dart';
-
 part 'resume.g.dart';
-
 @HiveType(typeId: HiveTypeIds.resume)
 class Resume extends HiveObject {
   @HiveField(0)
   int? id;
-
   @HiveField(1)
   String uploadedFrom;
-
   @HiveField(2)
   String pdfPath;
-
   @HiveField(3)
   String rawText;
-
   @HiveField(4)
   String cleanText;
-
   @HiveField(5)
   String standarizedText;
-
   @HiveField(6)
   int? jobGroupId;
-
   @HiveField(7)
   int? specializationId;
-
   @HiveField(8)
   int? qualificationId;
-
   @HiveField(9)
   String? fullName;
-
   @HiveField(10)
   int? gptCallId;
-
   @HiveField(11)
   DateTime? createdAt;
-
   @HiveField(12)
   DateTime? updatedAt;
-
   Resume({
     this.id,
     required this.uploadedFrom,
@@ -61,16 +46,13 @@ class Resume extends HiveObject {
     this.createdAt,
     this.updatedAt,
   });
-
   // Factory method to create an instance from JSON
   factory Resume.fromJson(Map<String, dynamic> json) {
     print("------------PRINTING KEYS------------");
     print(json.keys); // Prints top-level keys
     print(json['resume']?.keys.join(', ')); // Prints all keys inside 'resume' without '...'
     print("------------PRINTING KEYS------------");
-
     final resumeData = json['resume']; // Access the nested 'resume' object
-
     return Resume(
       id: resumeData['ID'],
       uploadedFrom: resumeData['UploadedFrom'] ?? '',
@@ -87,7 +69,6 @@ class Resume extends HiveObject {
       updatedAt: resumeData['UpdatedAt'] != null ? DateTime.parse(resumeData['UpdatedAt']) : null,
     );
   }
-
   // Method to convert the instance to JSON
   Map<String, dynamic> toJson() {
     return {

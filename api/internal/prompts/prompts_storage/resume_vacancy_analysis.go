@@ -1,4 +1,4 @@
-// prompts/prompts_storage/resume_vacancy_analysis.go
+// internal/prompts/prompts_storage/resume_vacancy_analysis.go
 
 package prompts_storage
 

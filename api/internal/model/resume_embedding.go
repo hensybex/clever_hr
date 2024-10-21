@@ -1,4 +1,4 @@
-// model/resume_embedding.go
+// internal/model/resume_embedding.go
 
 package model
 

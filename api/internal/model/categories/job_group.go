@@ -1,4 +1,4 @@
-// model/categories/job_group.go
+// internal/model/categories/job_group.go
 
 package category_model
 

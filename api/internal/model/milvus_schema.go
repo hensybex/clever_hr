@@ -1,4 +1,4 @@
-// model/milvus_schema.go
+// internal/model/milvus_schema.go
 
 package model
 

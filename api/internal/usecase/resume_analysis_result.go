@@ -1,4 +1,4 @@
-// usecase/resume_analysis_result.go
+// internal/usecase/resume_analysis_result.go
 
 package usecase
 

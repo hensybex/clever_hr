@@ -1,4 +1,4 @@
-// prompts/prompts_storage/detect_specialization vacancy.go
+// internal/prompts/prompts_storage/detect_specialization vacancy.go
 
 package prompts_storage
 

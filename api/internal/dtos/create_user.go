@@ -1,4 +1,4 @@
-// dtos/create_user.go
+// internal/dtos/create_user.go
 
 package dtos
 

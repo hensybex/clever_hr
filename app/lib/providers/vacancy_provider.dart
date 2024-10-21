@@ -1,7 +1,6 @@
-// providers/vacancy_provider.dart
+// lib/providers/vacancy_provider.dart
 
 import 'dart:async';
-
 import 'package:app/services/api/websocket_service.dart';
 import 'package:app/services/hive/hive_init.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,6 @@ import '../models/vacancy_resume_match.dart';
 import '../services/api/vacancy_service.dart';
 import 'package:hive/hive.dart';
 import '../services/api/match_service.dart';
-
 class VacancyProvider with ChangeNotifier {
   final VacancyService _vacancyService;
   final MatchService _matchService;
@@ -22,42 +20,32 @@ class VacancyProvider with ChangeNotifier {
   Vacancy? _currentVacancy;
   StreamSubscription<ServerMessage>? _wsSubscription;
   List<VacancyResumeMatch> _vacancyResumeMatches = [];
-
   List<Vacancy> get vacancies => _vacancies;
   Vacancy? get vacancy => _currentVacancy;
   List<VacancyResumeMatch> get vacancyResumeMatches => _vacancyResumeMatches;
-
   bool isLoading = false;
   String errorMessage = '';
   String waitingMessage = '';
   String displayedContent = '';
-
   Future<void> loadVacancies() async {
     try {
       var box = Hive.box<Vacancy>(BoxNames.vacancies);
       _vacancies = box.values.toList();
-
       var fetchedVacancies = await _vacancyService.getVacancies();
-
       _vacancies = fetchedVacancies;
-
       await box.clear();
       await box.addAll(_vacancies);
-
       notifyListeners(); // Notify that the data has been updated
     } catch (e) {
       print("Error while loading vacancies: $e");
     }
   }
-
   Future<void> fetchVacancyResumeMatches(int vacancyId) async {
     isLoading = true;
-
     // Defer notifyListeners to prevent state changes during build
     SchedulerBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
-
     try {
       final fetchedResumes = await _matchService.fetchVacancyResumeMatches(vacancyId);
       _vacancyResumeMatches = fetchedResumes;
@@ -66,13 +54,11 @@ class VacancyProvider with ChangeNotifier {
       errorMessage = 'Error fetching resume matches: $e';
       isLoading = false;
     }
-
     // Defer notifyListeners to prevent state changes during build
     SchedulerBinding.instance.addPostFrameCallback((_) {
       notifyListeners();
     });
   }
-
   Future<void> fetchVacancy(int vacancyId) async {
     try {
       final Vacancy fetchedVacancy = await _vacancyService.getVacancyByID(vacancyId);
@@ -83,55 +69,45 @@ class VacancyProvider with ChangeNotifier {
     }
     notifyListeners();
   }
-
   Future<void> createVacancy(Vacancy vacancy) async {
     try {
       // Log the beginning of the WebSocket connection attempt
       print("Starting WebSocket connection for vacancy creation...");
-
       isLoading = true;
       errorMessage = '';
       waitingMessage = 'Uploading vacancy...';
       notifyListeners();
-
       // Start the WebSocket connection
       Stream<ServerMessage> messageStream = _wsService.createVacancyWebSocket(vacancy);
-
       // Log successful WebSocket connection initialization
       print("WebSocket connection initialized successfully");
-
       // Listen to the WebSocket stream
       _wsSubscription?.cancel();
       _wsSubscription = messageStream.listen(
         (serverMessage) async {
           // Log every received server message
           print("Received server message: ${serverMessage.status}");
-
           if (serverMessage.status != null) {
             // Handle status updates
             waitingMessage = serverMessage.status!;
             print("Status update: $waitingMessage");
             notifyListeners();
           }
-
           if (serverMessage.result != null) {
             // Handle result content
             displayedContent += serverMessage.result!;
             print("Received result chunk: ${serverMessage.result!}");
             notifyListeners();
           }
-
           if (serverMessage.status == "Vacancy processing and matching completed") {
             // Update vacancy status
             vacancy.status = 'Analysed';
             print("Vacancy processing completed, updating status.");
-
             // Add the vacancy to the list and Hive cache
             _vacancies.add(vacancy);
             var box = Hive.box<Vacancy>(BoxNames.vacancies);
             await box.add(vacancy);
             print("Vacancy added to Hive cache successfully");
-
             isLoading = false;
             waitingMessage = '';
             notifyListeners();
@@ -161,7 +137,6 @@ class VacancyProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
   @override
   void dispose() {
     _wsSubscription?.cancel();

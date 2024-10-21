@@ -1,4 +1,4 @@
-// prompts/prompt_constructor.go
+// internal/prompts/prompt_constructor.go
 
 package prompts
 

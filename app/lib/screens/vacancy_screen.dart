@@ -1,4 +1,4 @@
-// screens/vacancy_screen.dart
+// lib/screens/vacancy_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -9,20 +9,15 @@ import '../utils/locales.dart';
 import '../utils/router.dart';
 import '../widgets/expandable_text.dart';
 import '../widgets/resume_card.dart';
-
 class VacancyScreen extends StatefulWidget {
   final int vacancyId;
-
   const VacancyScreen({super.key, required this.vacancyId});
-
   @override
   VacancyScreenState createState() => VacancyScreenState();
 }
-
 class VacancyScreenState extends State<VacancyScreen> {
   bool isExpanded = false;
   late int vacancyId;
-
   @override
   void initState() {
     super.initState();
@@ -31,7 +26,6 @@ class VacancyScreenState extends State<VacancyScreen> {
     vacancyProvider.fetchVacancyResumeMatches(vacancyId);
     vacancyProvider.fetchVacancy(vacancyId);
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,13 +43,10 @@ class VacancyScreenState extends State<VacancyScreen> {
           if (vacancyProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-
           if (vacancyProvider.errorMessage.isNotEmpty) {
             return Center(child: Text(vacancyProvider.errorMessage));
           }
-
           final matches = vacancyProvider.vacancyResumeMatches;
-
           return SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(20),

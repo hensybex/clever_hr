@@ -1,4 +1,4 @@
-// repository/user.go
+// internal/repository/user.go
 
 package repository
 

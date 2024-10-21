@@ -1,4 +1,4 @@
-// usecase/resume.go
+// internal/usecase/resume.go
 
 package usecase
 

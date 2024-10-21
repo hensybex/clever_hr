@@ -1,4 +1,4 @@
-// model/categories/specialization.go
+// internal/model/categories/specialization.go
 
 package category_model
 

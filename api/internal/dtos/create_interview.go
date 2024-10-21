@@ -1,4 +1,4 @@
-// dtos/create_interview.go
+// internal/dtos/create_interview.go
 
 package dtos
 

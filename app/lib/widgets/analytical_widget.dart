@@ -1,14 +1,12 @@
-// widgets/analytical_widget.dart
+// lib/widgets/analytical_widget.dart
 
 import 'package:flutter/material.dart';
-
 class AnalyticalWidget extends StatelessWidget {
   final int score;
   final String analysisText;
   final bool isHovered; // Hover state from provider
   final Function(bool) onHoverChanged;
   final double widgetHeight; // Pass dynamic height to widget
-
   const AnalyticalWidget({
     super.key,
     required this.score,
@@ -17,7 +15,6 @@ class AnalyticalWidget extends StatelessWidget {
     required this.onHoverChanged,
     required this.widgetHeight, // Use dynamic height
   });
-
   @override
   Widget build(BuildContext context) {
     return MouseRegion(

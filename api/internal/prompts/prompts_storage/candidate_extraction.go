@@ -1,4 +1,4 @@
-// prompts/prompts_storage/candidate_extraction.go
+// internal/prompts/prompts_storage/candidate_extraction.go
 
 package prompts_storage
 

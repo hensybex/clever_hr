@@ -1,4 +1,4 @@
-// config/milvus_client.go
+// internal/config/milvus_client.go
 
 package config
 

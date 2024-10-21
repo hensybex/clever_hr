@@ -1,4 +1,4 @@
-// repository/specialization.go
+// internal/repository/specialization.go
 
 package repository
 

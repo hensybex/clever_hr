@@ -1,4 +1,4 @@
-// prompts/prompts_storage/detect_specialization.go
+// internal/prompts/prompts_storage/detect_specialization.go
 
 package prompts_storage
 

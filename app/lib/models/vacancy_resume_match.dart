@@ -1,64 +1,44 @@
-// models/vacancy_resume_match.dart
+// lib/models/vacancy_resume_match.dart
 
 import 'package:hive/hive.dart';
-
 import 'hive_type_ids.dart';
-
 part 'vacancy_resume_match.g.dart';
-
 @HiveType(typeId: HiveTypeIds.vacancyResumeMatch)
 class VacancyResumeMatch extends HiveObject {
   @HiveField(0)
   int id;
-
   @HiveField(1)
   int vacancyId;
-
   @HiveField(2)
   int resumeId;
-
   @HiveField(3)
   double suitability; // Value between 0.0 and 1.0 (Matches `Score` in Go model)
-
   @HiveField(4)
   double analysedForMatch; // Value between 0.0 and 1.0
-
   @HiveField(5)
   AnalysisField relevantWorkExperience;
-
   @HiveField(6)
   AnalysisField technicalSkillsAndProficiencies;
-
   @HiveField(7)
   AnalysisField educationAndCertifications;
-
   @HiveField(8)
   AnalysisField softSkillsAndCulturalFit;
-
   @HiveField(9)
   AnalysisField languageAndCommunicationSkills;
-
   @HiveField(10)
   AnalysisField problemSolvingAndAnalyticalAbilities;
-
   @HiveField(11)
   AnalysisField adaptabilityAndLearningCapacity;
-
   @HiveField(12)
   AnalysisField leadershipAndManagementExperience;
-
   @HiveField(13)
   AnalysisField motivationAndCareerObjectives;
-
   @HiveField(14)
   AnalysisField additionalQualificationsAndValueAdds;
-
   @HiveField(15)
   String analysisStatus;
-
   @HiveField(16)
   DateTime createdAt;
-
   VacancyResumeMatch({
     required this.id,
     required this.vacancyId,
@@ -78,7 +58,6 @@ class VacancyResumeMatch extends HiveObject {
     required this.analysisStatus,
     required this.createdAt,
   });
-
   // Factory method to create an instance from JSON
   factory VacancyResumeMatch.fromJson(Map<String, dynamic> json) {
     return VacancyResumeMatch(
@@ -101,7 +80,6 @@ class VacancyResumeMatch extends HiveObject {
       createdAt: DateTime.parse(json['CreatedAt']),
     );
   }
-
   // Method to convert the instance to JSON
   Map<String, dynamic> toJson() {
     return {
@@ -125,20 +103,16 @@ class VacancyResumeMatch extends HiveObject {
     };
   }
 }
-
 @HiveType(typeId: HiveTypeIds.analysisField)
 class AnalysisField {
   @HiveField(0)
   String overview;
-
   @HiveField(1)
   int score;
-
   AnalysisField({
     required this.overview,
     required this.score,
   });
-
   // Factory method to create an AnalysisField instance from JSON
   factory AnalysisField.fromJson(Map<String, dynamic> json) {
     return AnalysisField(
@@ -146,7 +120,6 @@ class AnalysisField {
       score: json['score'],
     );
   }
-
   // Method to convert the AnalysisField to JSON
   Map<String, dynamic> toJson() {
     return {

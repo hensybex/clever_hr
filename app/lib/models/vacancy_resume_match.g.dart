@@ -82,10 +82,7 @@ class VacancyResumeMatchAdapter extends TypeAdapter<VacancyResumeMatch> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is VacancyResumeMatchAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is VacancyResumeMatchAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }
 
 class AnalysisFieldAdapter extends TypeAdapter<AnalysisField> {
@@ -119,8 +116,5 @@ class AnalysisFieldAdapter extends TypeAdapter<AnalysisField> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AnalysisFieldAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is AnalysisFieldAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

@@ -1,4 +1,4 @@
-// mistral/mistral_chat.go
+// internal/mistral/mistral_chat.go
 
 package mistral
 

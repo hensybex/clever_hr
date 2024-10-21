@@ -1,4 +1,4 @@
-// widgets/resume_card.dart
+// lib/widgets/resume_card.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -7,12 +7,9 @@ import '../models/vacancy_resume_match.dart';
 import '../utils/locales.dart';
 import '../utils/router.dart';
 import 'mini_analytical_widget.dart';
-
 class ResumeCard extends StatelessWidget {
   final VacancyResumeMatch resumeMatch;
-
   const ResumeCard({super.key, required this.resumeMatch});
-
   @override
   Widget build(BuildContext context) {
     // Calculate gradient based on analysedForMatch value
@@ -20,7 +17,6 @@ class ResumeCard extends StatelessWidget {
     Color startColor = Colors.blue;
     Color endColor = Colors.green;
     Color backgroundColor = Color.lerp(startColor, endColor, value)!;
-
     return MouseRegion(
       cursor: SystemMouseCursors.click, // Update the cursor to pointer on hover
       child: GestureDetector(

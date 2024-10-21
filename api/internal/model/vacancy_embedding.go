@@ -1,4 +1,4 @@
-// model/vacancy_embedding.go
+// internal/model/vacancy_embedding.go
 
 package model
 

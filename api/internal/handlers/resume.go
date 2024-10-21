@@ -1,4 +1,4 @@
-// handlers/resume.go
+// internal/handlers/resume.go
 
 package handlers
 

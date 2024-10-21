@@ -1,4 +1,4 @@
-// model/categories/qualification.go
+// internal/model/categories/qualification.go
 
 package category_model
 

@@ -1,4 +1,4 @@
-// screens/create_vacancy_screen.dart
+// lib/screens/create_vacancy_screen.dart
 
 import 'package:app/utils/locales.dart';
 import 'package:app/utils/router.dart';
@@ -8,22 +8,17 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/vacancy_provider.dart';
 import '../models/vacancy.dart';
-
 class CreateVacancyScreen extends StatefulWidget {
   const CreateVacancyScreen({Key? key}) : super(key: key);
-
   @override
   CreateVacancyScreenState createState() => CreateVacancyScreenState();
 }
-
 class CreateVacancyScreenState extends State<CreateVacancyScreen> {
   final _formKey = GlobalKey<FormState>();
   final _descriptionController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     final vacancyProvider = Provider.of<VacancyProvider>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocale.createVacancy.getString(context)),
@@ -75,7 +70,6 @@ class CreateVacancyScreenState extends State<CreateVacancyScreen> {
                             description: _descriptionController.text,
                           );
                           vacancyProvider.createVacancy(newVacancy);
-
                           // Navigate to home after vacancy creation
                           context.go(RouteNames.home);
                         }

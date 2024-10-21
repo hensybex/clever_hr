@@ -1,4 +1,4 @@
-// migration/migration.go
+// internal/migration/migration.go
 
 package migration
 

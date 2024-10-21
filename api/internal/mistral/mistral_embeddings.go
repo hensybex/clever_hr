@@ -1,4 +1,4 @@
-// mistral/mistral_embeddings.go
+// internal/mistral/mistral_embeddings.go
 
 package mistral
 

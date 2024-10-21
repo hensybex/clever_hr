@@ -1,4 +1,4 @@
-// router/router.go
+// internal/router/router.go
 
 package router
 

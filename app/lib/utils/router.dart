@@ -1,4 +1,4 @@
-// utils/router.dart
+// lib/utils/router.dart
 
 import 'package:go_router/go_router.dart';
 import '../screens/login_screen.dart';
@@ -6,7 +6,6 @@ import '../screens/home_screen.dart';
 import '../screens/create_vacancy_screen.dart';
 import '../screens/vacancy_screen.dart';
 import '../screens/vacancy_resume_match_screen.dart';
-
 final routes = [
   GoRoute(
     path: RouteNames.login,
@@ -35,7 +34,6 @@ final routes = [
     },
   ),
 ];
-
 class RouteNames {
   static String login = '/';
   static String home = '/home';

@@ -1,4 +1,4 @@
-// mistral/mistral_init.go
+// internal/mistral/mistral_init.go
 
 package mistral
 

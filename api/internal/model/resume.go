@@ -1,4 +1,4 @@
-// model/resume.go
+// internal/model/resume.go
 
 package model
 

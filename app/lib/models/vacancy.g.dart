@@ -1,3 +1,5 @@
+// models/vacancy.g.dart
+
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'vacancy.dart';
@@ -49,8 +51,5 @@ class VacancyAdapter extends TypeAdapter<Vacancy> {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is VacancyAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+      identical(this, other) || other is VacancyAdapter && runtimeType == other.runtimeType && typeId == other.typeId;
 }

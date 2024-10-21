@@ -1,4 +1,4 @@
-// model/vacancy.go
+// internal/model/vacancy.go
 
 package model
 

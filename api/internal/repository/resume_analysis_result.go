@@ -1,4 +1,4 @@
-// repository/resume_analysis_result.go
+// internal/repository/resume_analysis_result.go
 
 package repository
 

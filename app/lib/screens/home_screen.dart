@@ -1,4 +1,4 @@
-// screens/home_screen.dart
+// lib/screens/home_screen.dart
 
 import 'package:app/utils/router.dart';
 import 'package:flutter/material.dart';
@@ -11,30 +11,24 @@ import '../providers/vacancy_provider.dart';
 import '../utils/locales.dart';
 import '../widgets/vacancy_card.dart';
 import '../models/vacancy.dart';
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-
   @override
   HomeScreenState createState() => HomeScreenState();
 }
-
 class HomeScreenState extends State<HomeScreen> {
   late Future<void> _vacancyFuture;
-
   @override
   void initState() {
     super.initState();
     final vacancyProvider = Provider.of<VacancyProvider>(context, listen: false);
     _vacancyFuture = vacancyProvider.loadVacancies();
   }
-
   @override
   Widget build(BuildContext context) {
     final vacancyProvider = Provider.of<VacancyProvider>(context);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final localizationProvider = Provider.of<LocalizationProvider>(context); // Access the localization provider
-
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocale.vacancies.getString(context)), // Use localized text

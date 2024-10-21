@@ -1,30 +1,22 @@
-// models/vacancy.dart
+// lib/models/vacancy.dart
 
 import 'package:hive/hive.dart';
 import 'hive_type_ids.dart';
-
 part 'vacancy.g.dart';
-
 @HiveType(typeId: HiveTypeIds.vacancy)
 class Vacancy extends HiveObject {
   @HiveField(0)
   int? id;
-
   @HiveField(1)
   String description;
-
   @HiveField(2)
   String status;
-
   @HiveField(3)
   String? title;
-
   @HiveField(4)
   String? standarizedText;
-
   @HiveField(5)
   int? jobGroupId;
-
   Vacancy({
     this.id,
     required this.description,
@@ -33,7 +25,6 @@ class Vacancy extends HiveObject {
     this.standarizedText,
     this.jobGroupId,
   });
-
   // Factory method to create an instance from JSON
   factory Vacancy.fromJson(Map<String, dynamic> json) {
     return Vacancy(
@@ -45,7 +36,6 @@ class Vacancy extends HiveObject {
       jobGroupId: json['JobGroupID'], // Handle nullable jobGroupId
     );
   }
-
   // Method to convert the instance to JSON
   Map<String, dynamic> toJson() {
     return {

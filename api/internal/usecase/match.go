@@ -1,4 +1,4 @@
-// usecase/match.go
+// internal/usecase/match.go
 
 package usecase
 

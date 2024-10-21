@@ -1,7 +1,6 @@
-// main.dart
+// lib/main.dart
 
 import 'dart:ui';
-
 import 'package:app/providers/match_provider.dart';
 import 'package:app/services/api/auth_service.dart';
 import 'package:app/services/api/match_service.dart';
@@ -22,30 +21,23 @@ import 'utils/locales.dart';
 import 'utils/router.dart';
 import 'providers/auth_provider.dart';
 import 'providers/vacancy_provider.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "assets/.env");
   await HiveInitializer.instance.initHive();
   runApp(const MyApp());
 }
-
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }
-
 class _MyAppState extends State<MyApp> with AppLocale {
   final FlutterLocalization localization = FlutterLocalization.instance;
-
   @override
   void initState() {
     super.initState();
-
     String systemLanguageCode = PlatformDispatcher.instance.locale.languageCode;
-
     localization.init(
       mapLocales: [
         const MapLocale('en', AppLocale.EN),
@@ -53,14 +45,11 @@ class _MyAppState extends State<MyApp> with AppLocale {
       ],
       initLanguageCode: systemLanguageCode,
     );
-
     localization.onTranslatedLanguage = _onTranslatedLanguage;
   }
-
   void _onTranslatedLanguage(Locale? locale) {
     setState(() {});
   }
-
   @override
   Widget build(BuildContext context) {
     final apiClient = ApiClient(apiBaseUrl);
@@ -83,17 +72,13 @@ class _MyAppState extends State<MyApp> with AppLocale {
     );
   }
 }
-
 class App extends StatefulWidget {
   const App({super.key});
-
   @override
   AppState createState() => AppState();
 }
-
 class AppState extends State<App> {
   late final GoRouter router;
-
   @override
   void initState() {
     super.initState();
@@ -101,11 +86,9 @@ class AppState extends State<App> {
       routes: routes,
     );
   }
-
   @override
   Widget build(BuildContext context) {
     final localization = FlutterLocalization.instance;
-
     return MaterialApp.router(
       routerConfig: router,
       title: 'HR App',

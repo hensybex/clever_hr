@@ -1,4 +1,4 @@
-// handlers/vacancy.go
+// internal/handlers/vacancy.go
 
 package handlers
 

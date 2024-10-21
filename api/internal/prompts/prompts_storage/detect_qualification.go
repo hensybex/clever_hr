@@ -1,4 +1,4 @@
-// prompts/prompts_storage/detect_qualification.go
+// internal/prompts/prompts_storage/detect_qualification.go
 
 package prompts_storage
 

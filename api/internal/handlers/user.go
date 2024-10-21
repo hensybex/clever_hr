@@ -1,4 +1,4 @@
-// handlers/user.go
+// internal/handlers/user.go
 
 package handlers
 

@@ -1,4 +1,4 @@
-// prompts/prompts_storage/detect_group.go
+// internal/prompts/prompts_storage/detect_group.go
 
 package prompts_storage
 

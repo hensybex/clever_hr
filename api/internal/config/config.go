@@ -1,4 +1,4 @@
-// config/config.go
+// internal/config/config.go
 
 package config
 

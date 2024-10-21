@@ -1,4 +1,5 @@
 // lib/utils/locales.dart
+
 mixin AppLocale {
   static const String english = 'english';
   static const String russian = 'russian';
@@ -32,7 +33,6 @@ mixin AppLocale {
   static const String metricLeadershipExperience = "metricLeadershipExperience";
   static const String metricMotivationObjectives = "metricMotivationObjectives";
   static const String metricAdditionalQualifications = "metricAdditionalQualifications";
-  //
   static const String vacancyScreen = "vacancyScreen";
   static const String showMore = "showMore";
   static const String showLess = "showLess";
@@ -44,7 +44,6 @@ mixin AppLocale {
   static const String uploadedFrom = "uploadedFrom";
   static const String hoverOverTheBarForDetails = "hoverOverTheBarForDetails";
   static const String metric = "metric";
-
   static const Map<String, dynamic> EN = {
     english: 'English',
     russian: 'Russian',
@@ -90,7 +89,6 @@ mixin AppLocale {
     hoverOverTheBarForDetails: "Hover Over The Bar For Details",
     metric: "Metric: ",
   };
-
   static const Map<String, dynamic> RU = {
     english: 'Английский',
     russian: 'Русский',

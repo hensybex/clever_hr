@@ -1,4 +1,4 @@
-// model/gpt_call.go
+// internal/model/gpt_call.go
 
 package model
 

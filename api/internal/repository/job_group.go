@@ -1,4 +1,4 @@
-// repository/job_group.go
+// internal/repository/job_group.go
 
 package repository
 

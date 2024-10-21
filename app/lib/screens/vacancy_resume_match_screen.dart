@@ -1,4 +1,4 @@
-// screens/vacancy_resume_match_screen.dart
+// lib/screens/vacancy_resume_match_screen.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -11,23 +11,18 @@ import '../utils/locales.dart';
 import '../utils/router.dart';
 import '../widgets/analytical_widget.dart';
 import '../widgets/resume.dart';
-
 class VacancyResumeMatchScreen extends StatefulWidget {
   final int matchId;
-
   const VacancyResumeMatchScreen({super.key, required this.matchId});
-
   @override
   VacancyResumeMatchScreenState createState() => VacancyResumeMatchScreenState();
 }
-
 class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
   @override
   void initState() {
     super.initState();
     _loadMatchAndResume();
   }
-
   Future<void> _loadMatchAndResume() async {
     final matchProvider = Provider.of<MatchProvider>(context, listen: false);
     await matchProvider.loadVacancyResumeMatch(widget.matchId);
@@ -35,7 +30,6 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
       await matchProvider.loadResume(matchProvider.match!.resumeId);
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -48,7 +42,6 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
             onPressed: () {
               final matchProvider = Provider.of<MatchProvider>(context, listen: false);
               final vacancyId = matchProvider.match?.vacancyId; // Get the vacancyId from matchProvider
-
               if (vacancyId != null) {
                 // Use GoRouter to navigate back to the vacancy details screen
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -63,17 +56,13 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
           child: Consumer<MatchProvider>(
             builder: (context, matchProvider, child) {
               final resumeMatch = matchProvider.match;
-
               if (resumeMatch == null) {
                 return const Center(child: CircularProgressIndicator());
               }
-
               final resume = matchProvider.resume;
-
               if (resume == null) {
                 return const Center(child: CircularProgressIndicator());
               }
-
               // Render the resume widget and the analytical widgets in rows
               return SingleChildScrollView(
                 child: Column(
@@ -91,7 +80,6 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
       ),
     );
   }
-
   // Build the rows with 2 AnalyticalWidgets per row
   Widget _buildAnalyticalWidgetRows(BuildContext context, VacancyResumeMatch resumeMatch) {
     List<Widget> rows = [];
@@ -107,7 +95,6 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
     }
     return Column(children: rows);
   }
-
   // Helper method to build each AnalyticalWidget
   Widget _buildAnalyticalWidget(BuildContext context, int index, VacancyResumeMatch resumeMatch) {
     return Consumer<AnalyticalWidgetProvider>(
@@ -115,22 +102,17 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
         bool isHovered = provider.getHoverState(index);
         int score = _getScoreByIndex(resumeMatch, index);
         String analysisText = _getAnalysisTextByIndex(context, index, resumeMatch);
-
         // Base height for non-hovered state
         double baseHeight = 150;
-
         // Estimate the number of lines required for the text
         int estimatedCharactersPerLine = 30; // Adjust this based on font size and widget width
         int totalLines = (analysisText.length / estimatedCharactersPerLine).ceil();
-
         // Calculate dynamic height when hovered, assuming each line takes about 20px
         double heightPerLine = 20.0;
         double calculatedHeight = baseHeight + (totalLines * heightPerLine);
-
         // Set a reasonable max height to avoid the widget becoming too large
         double maxHeight = 300; // Adjust this as needed for your layout
         double widgetHeight = isHovered ? calculatedHeight.clamp(baseHeight, maxHeight) : baseHeight;
-
         return AnalyticalWidget(
           score: score,
           analysisText: analysisText,
@@ -143,7 +125,6 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
       },
     );
   }
-
   int _getScoreByIndex(VacancyResumeMatch resumeMatch, int index) {
     switch (index) {
       case 0:
@@ -170,7 +151,6 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
         return 0; // Provide a default score if index is out of range
     }
   }
-
   String _getAnalysisTextByIndex(BuildContext context, int index, VacancyResumeMatch resumeMatch) {
     switch (index) {
       case 0:
