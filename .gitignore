@@ -1,0 +1,7 @@
+# Exclude environment files
+.env
+
+# Exclude uploads directory
+uploads/
+danya_resumes/
+tmp/

@@ -1,5 +1,3 @@
-# restart_api_dev.sh
-
 #!/bin/bash
 
 # Function to handle cleanup and stopping of logs on script termination
@@ -14,23 +12,31 @@ trap cleanup SIGINT
 echo "Rebuilding and restarting API service..."
 
 # Bring up the db service to ensure the network is created
-sudo docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d db
+sudo docker-compose -p app -f docker-compose.yml -f docker-compose.dev.yml up -d db
+
+echo "---1---"
 
 # Stop the api service without removing the network
-sudo docker-compose -f docker-compose.yml -f docker-compose.dev.yml stop api
+sudo docker-compose -p app -f docker-compose.yml -f docker-compose.dev.yml stop api
 
-# Remove the api service container
-sudo docker-compose -f docker-compose.yml -f docker-compose.dev.yml rm -f api
+echo "---2---"
+
+# Remove the api service container and any orphan containers
+sudo docker-compose -p app -f docker-compose.yml -f docker-compose.dev.yml rm -f api
+
+echo "---3---"
 
 # Rebuild and bring up the api service
-sudo docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d api
+sudo docker-compose -p app -f docker-compose.yml -f docker-compose.dev.yml up --build -d api
+
+echo "---4---"
 
 # Check the status of the service
 if [ $? -eq 0 ]; then
     echo "API service restarted successfully. Tracking logs..."
     
     # Start streaming the logs for the api service
-    sudo docker-compose -f docker-compose.yml -f docker-compose.dev.yml logs -f api
+    sudo docker-compose -p app -f docker-compose.yml -f docker-compose.dev.yml logs -f api
 else
     echo "Failed to restart the API service."
     exit 1

@@ -1,4 +1,4 @@
-// internal/usecase/resume_analysis_result.go
+// usecase/resume_analysis_result.go
 
 package usecase
 
@@ -15,17 +15,15 @@ type ResumeAnalysisResultUsecase interface {
 }
 
 type resumeAnalysisResultUsecase struct {
-	analysisRepo  repository.ResumeAnalysisResultRepository
-	candidateRepo repository.CandidateRepository
-	resumeRepo    repository.ResumeRepository
+	analysisRepo repository.ResumeAnalysisResultRepository
+	resumeRepo   repository.ResumeRepository
 }
 
 func NewResumeAnalysisResultUsecase(
 	analysisRepo repository.ResumeAnalysisResultRepository,
-	candidateRepo repository.CandidateRepository,
 	resumeRepo repository.ResumeRepository,
 ) ResumeAnalysisResultUsecase {
-	return &resumeAnalysisResultUsecase{analysisRepo, candidateRepo, resumeRepo}
+	return &resumeAnalysisResultUsecase{analysisRepo, resumeRepo}
 }
 
 func (u *resumeAnalysisResultUsecase) CreateResumeAnalysisResult(result *model.ResumeAnalysisResult) error {
@@ -38,11 +36,6 @@ func (u *resumeAnalysisResultUsecase) GetResumeAnalysisResultByResumeID(resumeID
 	if err != nil {
 		return nil, errors.New("could not fetch resume analysis result")
 	}
-	resume, err := u.resumeRepo.GetResumeByID(resumeID)
-	if err != nil {
-		return nil, errors.New("could not fetch resume")
-	}
-	result.CandidateID = *resume.CandidateID
 	result.ResumeAnalysisResult = *resumeAnalysisResult
 	return result, nil
 }

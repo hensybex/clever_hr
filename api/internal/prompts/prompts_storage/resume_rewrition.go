@@ -1,4 +1,4 @@
-// internal/prompts/prompts_storage/resume_rewrition.go
+// prompts/prompts_storage/resume_rewrition.go
 
 package prompts_storage
 

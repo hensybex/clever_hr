@@ -1,4 +1,4 @@
-// internal/dtos/resume_analysis_result_dto.go
+// dtos/resume_analysis_result_dto.go
 
 package dtos
 

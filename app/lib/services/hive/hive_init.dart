@@ -1,8 +1,11 @@
-// lib/services/hive_init.dart
-import 'package:app/models/vacancy_model.dart';
-import 'package:app/models/vacancy_resume_match_model.dart';
+// services/hive/hive_init.dart
+
+import 'package:app/models/resume.dart';
+import 'package:app/models/user_token.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../../models/vacancy.dart';
+import '../../models/vacancy_resume_match.dart';
 import '../../utils/config.dart';
 
 class HiveInitializer {
@@ -14,24 +17,32 @@ class HiveInitializer {
 
   Future<void> initHive() async {
     await Hive.initFlutter();
-    Hive.registerAdapter(VacancyModelAdapter());
-    Hive.registerAdapter(VacancyResumeMatchModelAdapter());
+    Hive.registerAdapter(VacancyAdapter());
+    Hive.registerAdapter(ResumeAdapter());
+    Hive.registerAdapter(VacancyResumeMatchAdapter());
+    Hive.registerAdapter(UserTokenAdapter());
 
     if (clearHiveBoxes == ClearHiveBoxes.clear) {
       await clearAllBoxes();
     }
 
-    await Hive.openBox<VacancyModel>(BoxNames.vacancies);
-    await Hive.openBox<VacancyResumeMatchModel>(BoxNames.vacancyResumesMatches);
+    await Hive.openBox<Vacancy>(BoxNames.vacancies);
+    await Hive.openBox<Resume>(BoxNames.resumes);
+    await Hive.openBox<VacancyResumeMatch>(BoxNames.vacancyResumesMatches);
+    await Hive.openBox<UserToken>(BoxNames.userToken);
   }
 
   Future<void> clearAllBoxes() async {
     await Hive.deleteBoxFromDisk(BoxNames.vacancies);
+    await Hive.deleteBoxFromDisk(BoxNames.resumes);
     await Hive.deleteBoxFromDisk(BoxNames.vacancyResumesMatches);
+    await Hive.deleteBoxFromDisk(BoxNames.userToken);
   }
 }
 
 class BoxNames {
   static String vacancies = 'vacancies';
+  static String resumes = 'resumes';
   static String vacancyResumesMatches = 'vacancyResumesMatches';
+  static String userToken = 'userToken';
 }

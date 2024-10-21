@@ -1,10 +1,12 @@
-// internal/handlers/vacancy.go
+// handlers/vacancy.go
 
 package handlers
 
 import (
+	"clever_hr_api/internal/dtos"
 	"clever_hr_api/internal/model"
 	"clever_hr_api/internal/usecase"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -19,19 +21,57 @@ func NewVacancyHandler(vacancyUsecase usecase.VacancyUsecase) *VacancyHandler {
 	return &VacancyHandler{vacancyUsecase}
 }
 
-func (h *VacancyHandler) PostVacancy(c *gin.Context) {
-	var vacancy model.Vacancy
-	if err := c.ShouldBindJSON(&vacancy); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+type VacancyDescriptionRequest struct {
+	Description string `json:"description" binding:"required"`
+}
+
+func (h *VacancyHandler) UploadVacancy(c *gin.Context) {
+	// Get the user claims (using the correct key, "id", from JWT middleware)
+	user, exists := c.Get("id")
+	if !exists {
+		log.Println("User not authenticated")
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	if err := h.vacancyUsecase.CreateVacancy(&vacancy); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	// Extract user object from context
+	userObj, ok := user.(*model.User)
+	if !ok {
+		log.Println("Failed to extract user object from context")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal error"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Vacancy posted successfully"})
+	// Upgrade the HTTP connection to a WebSocket connection
+	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
+	if err != nil {
+		log.Println("WebSocket upgrade error:", err)
+		return
+	}
+	defer conn.Close()
+
+	// Read the vacancy description from the client
+	var req VacancyDescriptionRequest
+	if err := conn.ReadJSON(&req); err != nil {
+		log.Println("Read error:", err)
+		conn.WriteJSON(dtos.ServerMessage{Status: "Invalid input"})
+		return
+	}
+
+	// Create a Vacancy object with the description field and user ID
+	vacancy := model.Vacancy{
+		Description: req.Description,
+		UploaderID:  userObj.ID, // Assuming "id" is of type uint
+	}
+
+	// Call the usecase to process the vacancy and pass the WebSocket connection
+	if err := h.vacancyUsecase.UploadVacancy(&vacancy, conn); err != nil {
+		conn.WriteJSON(dtos.ServerMessage{Status: "Error: " + err.Error()})
+		return
+	}
+
+	// Send completion message
+	conn.WriteJSON(dtos.ServerMessage{Status: "Vacancy uploaded and resumes matched successfully"})
 }
 
 func (h *VacancyHandler) GetVacancies(c *gin.Context) {
@@ -83,4 +123,14 @@ func (h *VacancyHandler) UpdateVacancyStatus(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Vacancy status updated successfully"})
+}
+
+// UpdateAllVacancyEmbeddings updates embeddings for all vacancies
+func (h *VacancyHandler) UpdateAllVacancyEmbeddings(c *gin.Context) {
+	err := h.vacancyUsecase.UpdateAllVacancyEmbeddings()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"message": "All vacancy embeddings updated successfully"})
 }

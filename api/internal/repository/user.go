@@ -1,4 +1,4 @@
-// internal/repository/user.go
+// repository/user.go
 
 package repository
 
@@ -12,7 +12,6 @@ type UserRepository interface {
 	CreateUser(user *model.User) error
 	GetUserByID(id uint) (*model.User, error)
 	SwitchUserType(userID uint) error
-	FindCandidatesByUserID(userID uint) ([]model.Candidate, error)
 }
 
 type userRepository struct {
@@ -56,15 +55,4 @@ func (r *userRepository) SwitchUserType(userID uint) error {
 
 	// Update the user type in the database
 	return r.db.Save(&user).Error
-}
-
-func (r *userRepository) FindCandidatesByUserID(userID uint) ([]model.Candidate, error) {
-	var candidates []model.Candidate
-
-	// Query the database to find candidates where UploadedByUserID is the given userID
-	if err := r.db.Where("uploaded_by_user_id = ?", userID).Find(&candidates).Error; err != nil {
-		return nil, err
-	}
-
-	return candidates, nil
 }

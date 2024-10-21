@@ -1,9 +1,10 @@
-// internal/router/router.go
+// router/router.go
 
 package router
 
 import (
 	"clever_hr_api/internal/handlers"
+	"clever_hr_api/internal/mistral"
 	"clever_hr_api/internal/repository"
 	"clever_hr_api/internal/service"
 	"clever_hr_api/internal/usecase"
@@ -11,10 +12,11 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/milvus-io/milvus-sdk-go/v2/client"
 	"gorm.io/gorm"
 )
 
-func SetupRouter(db *gorm.DB) *gin.Engine {
+func SetupRouter(db *gorm.DB, milvusClient client.Client) *gin.Engine {
 	r := gin.Default()
 
 	// Apply CORS middleware
@@ -28,19 +30,18 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 
 	// Initialize repositories
 	userRepo := repository.NewUserRepository(db)
-	candidateRepo := repository.NewCandidateRepository(db)
 	resumeRepo := repository.NewResumeRepository(db)
 	resumeAnalysisResultRepo := repository.NewResumeAnalysisResultRepository(db)
-	interviewRepo := repository.NewInterviewRepository(db)
-	interviewMessageRepo := repository.NewInterviewMessageRepository(db)
-	interviewAnalysisResultRepo := repository.NewInterviewAnalysisResultRepository(db)
 	gptCallRepo := repository.NewGPTCallRepository(db)
-	interviewTypeRepo := repository.NewInterviewTypeRepository(db)
 	vacancyRepo := repository.NewVacancyRepository(db)
-	embeddingRepo := repository.NewEmbeddingRepository(db)
+	jobGroupRepo := repository.NewJobGroupRepository(db)
+	specializationRepo := repository.NewSpecializationRepository(db)
+	qualificationRepo := repository.NewQualificationRepository(db)
+	vacancyResumeMatchRepo := repository.NewVacancyResumeMatchRepository(db)
+	embeddingRepo := repository.NewEmbeddingRepository(milvusClient)
 
 	// Initialize services
-	mistralService := service.NewMistralService(gptCallRepo)
+	mistralService := mistral.NewMistralService(gptCallRepo)
 	authService := service.NewAuthService(userRepo, nil)
 
 	// Initialize AuthMiddleware
@@ -50,65 +51,70 @@ func SetupRouter(db *gorm.DB) *gin.Engine {
 	}
 
 	// Set the jwtMiddleware in AuthService after it's created
-	authService = service.NewAuthService(userRepo, authMiddleware)
+	//authService = service.NewAuthService(userRepo, authMiddleware)
 
 	// Initialize use cases
 	userUsecase := usecase.NewUserUsecase(userRepo)
-	candidateUsecase := usecase.NewCandidateUsecase(candidateRepo, resumeRepo, userRepo, resumeAnalysisResultRepo, interviewRepo, interviewAnalysisResultRepo)
-	resumeUsecase := usecase.NewResumeUsecase(resumeRepo, resumeAnalysisResultRepo, candidateRepo, userRepo, *mistralService)
-	interviewUsecase := usecase.NewInterviewUsecase(interviewRepo, interviewTypeRepo, interviewMessageRepo, interviewAnalysisResultRepo, resumeRepo, userRepo, candidateRepo, *mistralService)
-	interviewTypeUsecase := usecase.NewInterviewTypeUsecase(interviewTypeRepo)
-	resumeAnalysisResultUsecase := usecase.NewResumeAnalysisResultUsecase(resumeAnalysisResultRepo, candidateRepo, resumeRepo)
-	vacancyUsecase := usecase.NewVacancyUsecase(vacancyRepo, embeddingRepo)
+	resumeUsecase := usecase.NewResumeUsecase(resumeRepo, embeddingRepo, resumeAnalysisResultRepo, userRepo, jobGroupRepo, specializationRepo, qualificationRepo, *mistralService)
+	resumeAnalysisResultUsecase := usecase.NewResumeAnalysisResultUsecase(resumeAnalysisResultRepo, resumeRepo)
+	matchUsecase := usecase.NewMatchUsecase(embeddingRepo, vacancyResumeMatchRepo, vacancyRepo, resumeRepo, *mistralService)
+	vacancyUsecase := usecase.NewVacancyUsecase(vacancyRepo, embeddingRepo, jobGroupRepo, specializationRepo, qualificationRepo, *mistralService, matchUsecase)
+	//embeddingUsecase := usecase.NewEmbeddingUsecase(embeddingRepo)
 
 	// Initialize handlers
-	userHandler := handlers.NewUserHandler(userUsecase, candidateUsecase)
+	userHandler := handlers.NewUserHandler(userUsecase)
 	resumeHandler := handlers.NewResumeHandler(resumeUsecase, userUsecase, resumeAnalysisResultUsecase)
-	interviewHandler := handlers.NewInterviewHandler(interviewUsecase)
-	candidateHandler := handlers.NewCandidateHandler(candidateUsecase)
-	interviewTypeHandler := handlers.NewInterviewTypeHandler(interviewTypeUsecase)
 	vacancyHandler := handlers.NewVacancyHandler(vacancyUsecase)
+	matchHandler := handlers.NewMatchHandler(matchUsecase)
+	authHandler := handlers.NewAuthHandler(authService)
+	//embeddingHandler := handlers.NewEmbeddingHandler(embeddingUsecase)
 
 	// Public routes (no auth needed)
 	r.POST("/login", authMiddleware.LoginHandler)
+	r.POST("/logout", authHandler.Logout)
 
 	// Define API routes
 	api := r.Group("/api")
+	// Update the API routes to be more specific
+	//api.GET("/embeddings/resume/:resume_id/embedding", embeddingHandler.GetResumeEmbedding)
+	//api.GET("/embeddings/vacancy/:vacancy_id/embedding", embeddingHandler.GetVacancyEmbedding)
+	//api.GET("/embeddings/vacancy/:vacancy_id/match-resumes", embeddingHandler.FindMatchingResumes)
+
 	api.Use(authMiddleware.MiddlewareFunc())
 	{
-		// WebSocket routes for interview analysis
-		api.GET("/ws/interview/analyse", interviewHandler.AnalyseInterviewMessageWebsocket)
-
 		// User routes
 		api.POST("/users", userHandler.CreateUser)
 		api.GET("/users/:user_id/info", userHandler.GetUser)
 		api.PUT("/users/:user_id/switch", userHandler.SwitchUserType)
-		//api.GET("/users/:user_id/candidates", userHandler.GetCandidatesByUserID)
-		//api.GET("/users/:user_id/get_role", userHandler.GetUserRoleByTgID)
 
 		// Resume routes
+		api.GET("/resumes/:resume_id", resumeHandler.GetResumeByID)
 		api.POST("/resumes/upload", resumeHandler.UploadResume)
-		//api.POST("/resumes", resumeHandler.CreateResumeHandler)
 		api.GET("/resumes/:resume_id/analyze", resumeHandler.RunResumeAnalysis)
 		api.GET("/resumes/:resume_id/analysis-result", resumeHandler.GetResumeAnalysisResult)
 
 		// Vacancy routes
-		api.POST("/vacancies", vacancyHandler.PostVacancy)
+		//api.POST("/vacancies/upload", vacancyHandler.UploadVacancy)
 		api.GET("/vacancies", vacancyHandler.GetVacancies)
 		api.GET("/vacancies/:id", vacancyHandler.GetVacancyByID)
 		api.PUT("/vacancies/:id/status", vacancyHandler.UpdateVacancyStatus)
 
-		// Interview routes
-		api.POST("/interviews", interviewHandler.CreateInterview)
-		api.GET("/interviews/:interview_id/analyze", interviewHandler.RunFullInterviewAnalysis)
-		api.GET("/interviews/:interview_id/analysis-result", interviewHandler.GetInterviewAnalysisResult)
+		// WebSocket route for matching vacancy with resumes
+		api.GET("/api/vacancies/:vac_id/match", matchHandler.MatchVacancyWithResumes)
+		// WebSocket route for uploading a vacancy and matching resumes
+		api.GET("/vacancies/upload", vacancyHandler.UploadVacancy)
 
-		// Candidates routes
-		api.GET("/candidates/:candidate_id/get_by_id", candidateHandler.GetCandidateInfo)
-		api.GET("/candidates/:candidate_id/resume", candidateHandler.GetResume)
+		// Match routes
+		api.POST("/match/:vacancy_id/match", matchHandler.MatchVacancyWithResumes)
+		api.POST("/match/:vacancy_id/:resume_id", matchHandler.MatchVacancyWithResume)
+		api.GET("/match/:vacancy_id/matches", matchHandler.GetVacancyResumeMatches)
 
-		// Interview type routes
-		api.GET("/interview-types", interviewTypeHandler.ListInterviewTypes)
+		// More specific path to avoid conflict
+		api.GET("/match/details/:match_id", matchHandler.GetVacancyResumeMatchByID)
+
+		// One-time routes for updating embeddings (After DB switch)
+		api.POST("/resumes/update-embeddings", resumeHandler.UpdateAllResumeEmbeddings)
+		api.POST("/vacancies/update-embeddings", vacancyHandler.UpdateAllVacancyEmbeddings)
 	}
 
 	return r

@@ -1,4 +1,4 @@
-// internal/handlers/user.go
+// handlers/user.go
 
 package handlers
 
@@ -14,17 +14,14 @@ import (
 )
 
 type UserHandler struct {
-	userUsecase      usecase.UserUsecase
-	candidateUsecase usecase.CandidateUsecase
+	userUsecase usecase.UserUsecase
 }
 
 func NewUserHandler(
 	userUsecase usecase.UserUsecase,
-	candidateUsecase usecase.CandidateUsecase,
 ) *UserHandler {
 	return &UserHandler{
 		userUsecase,
-		candidateUsecase,
 	}
 }
 

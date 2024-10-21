@@ -1,4 +1,4 @@
-// internal/prompts/prompts.go
+// prompts/prompts.go
 
 package prompts
 
@@ -9,22 +9,36 @@ import (
 
 // Prompts struct that aggregates all specific prompts
 type Prompts struct {
-	ResumeRewritionPrompt          types.Prompt
-	InterviewMessageAnalysisPrompt types.Prompt
-	InterviewEndCheckPrompt        types.Prompt
-	FullInterviewAnalysisPrompt    types.Prompt
-	CandidateExtractionPrompt      types.Prompt
-	ResumeAnalysisPrompt           types.Prompt
+	ResumeRewritionPrompt                types.Prompt
+	FullInterviewAnalysisPrompt          types.Prompt
+	CandidateExtractionPrompt            types.Prompt
+	ResumeAnalysisPrompt                 types.Prompt
+	GroupDetectionPrompt                 types.Prompt
+	SpecializationDetectionPrompt        types.Prompt
+	QualificationDetectionPrompt         types.Prompt
+	GroupDetectionVacancyPrompt          types.Prompt
+	SpecializationDetectionVacancyPrompt types.Prompt
+	QualificationDetectionVacancyPrompt  types.Prompt
+	ResumeVacancyAnalysisPrompt          types.Prompt
+	ResumeStandardizationPrompt          types.Prompt
+	VacancyStandardizationPrompt         types.Prompt
 }
 
 // NewPrompts initializes and returns a Prompts struct with all predefined prompts
 func NewPrompts() *Prompts {
 	return &Prompts{
-		ResumeRewritionPrompt:          prompts_storage.ResumeRewritionPrompt,
-		InterviewMessageAnalysisPrompt: prompts_storage.InterviewMessageAnalysisPrompt,
-		InterviewEndCheckPrompt:        prompts_storage.InterviewEndCheckPrompt,
-		FullInterviewAnalysisPrompt:    prompts_storage.FullInterviewAnalysisPrompt,
-		CandidateExtractionPrompt:      prompts_storage.CandidateExtractionPrompt,
-		ResumeAnalysisPrompt:           prompts_storage.ResumeAnalysisPrompt,
+		ResumeRewritionPrompt:                prompts_storage.ResumeRewritionPrompt,
+		FullInterviewAnalysisPrompt:          prompts_storage.FullInterviewAnalysisPrompt,
+		CandidateExtractionPrompt:            prompts_storage.CandidateExtractionPrompt,
+		ResumeAnalysisPrompt:                 prompts_storage.ResumeAnalysisPrompt,
+		GroupDetectionPrompt:                 prompts_storage.GroupDetectionPrompt,
+		SpecializationDetectionPrompt:        prompts_storage.SpecializationDetectionPrompt,
+		QualificationDetectionPrompt:         prompts_storage.QualificationDetectionPrompt,
+		GroupDetectionVacancyPrompt:          prompts_storage.GroupDetectionVacancyPrompt,
+		SpecializationDetectionVacancyPrompt: prompts_storage.SpecializationDetectionVacancyPrompt,
+		QualificationDetectionVacancyPrompt:  prompts_storage.QualificationDetectionVacancyPrompt,
+		ResumeVacancyAnalysisPrompt:          prompts_storage.ResumeVacancyAnalysisPrompt,
+		ResumeStandardizationPrompt:          prompts_storage.ResumeStandardizationPrompt,
+		VacancyStandardizationPrompt:         prompts_storage.VacancyStandardizationPrompt,
 	}
 }

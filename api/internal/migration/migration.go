@@ -1,9 +1,10 @@
-// internal/migration/migration.go
+// migration/migration.go
 
 package migration
 
 import (
 	"clever_hr_api/internal/model"
+	"clever_hr_api/internal/model/categories"
 	"log"
 
 	"golang.org/x/crypto/bcrypt"
@@ -11,37 +12,6 @@ import (
 )
 
 func ApplyCustomMigrations(db *gorm.DB) error {
-	// Define interview types with descriptions
-	interviewTypes := []model.InterviewType{
-		{Name: "Go", Description: "Interview for Go developers with focus on concurrency and design patterns."},
-		{Name: "Python", Description: "Python interview focusing on web development, data analysis, and machine learning."},
-		{Name: "Flutter", Description: "Mobile app development interview for Flutter developers with focus on UI/UX and state management."},
-		{Name: "Java", Description: "Interview for Java developers with emphasis on enterprise solutions and multithreading."},
-		{Name: "JavaScript", Description: "Front-end interview focusing on JavaScript, DOM manipulation, and frameworks like React."},
-		{Name: "TypeScript", Description: "Interview for TypeScript developers with a focus on static typing and large-scale applications."},
-		{Name: "Ruby on Rails", Description: "Web development interview for Ruby on Rails focusing on full-stack development."},
-		{Name: "Kotlin", Description: "Interview for Kotlin developers with a focus on Android app development."},
-		{Name: "C#", Description: "Interview focusing on C# for .NET developers, with emphasis on web apps and APIs."},
-		{Name: "Swift", Description: "iOS app development interview for Swift developers with focus on SwiftUI and performance."},
-		{Name: "PHP", Description: "Backend interview for PHP developers, focusing on server-side web apps and frameworks like Laravel."},
-		{Name: "C++", Description: "Systems-level programming interview for C++ developers, focusing on memory management and performance."},
-		{Name: "Rust", Description: "Rust interview for systems programming, emphasizing memory safety and concurrency."},
-		{Name: "DevOps", Description: "DevOps interview focusing on CI/CD pipelines, cloud infrastructure, and automation."},
-		{Name: "Machine Learning", Description: "Interview focusing on machine learning models, algorithms, and data preprocessing."},
-		{Name: "Data Science", Description: "Data Science interview focusing on statistical analysis, data wrangling, and visualization."},
-		{Name: "Frontend Development", Description: "Front-end interview focusing on HTML, CSS, JavaScript, and modern frameworks."},
-		{Name: "Backend Development", Description: "Back-end development interview focusing on API design, databases, and security."},
-		{Name: "Full Stack Development", Description: "Interview for full-stack developers with a focus on both front-end and back-end technologies."},
-		{Name: "Cloud Computing", Description: "Interview focusing on cloud computing services (AWS, GCP, Azure) and scalable architectures."},
-	}
-
-	// Apply migrations
-	for _, interviewType := range interviewTypes {
-		if err := db.FirstOrCreate(&interviewType, model.InterviewType{Name: interviewType.Name}).Error; err != nil {
-			return err
-		}
-	}
-
 	// Define default user credentials (you should hash the password)
 	defaultUsername := "admin"
 	defaultPassword := "admin123"
@@ -59,6 +29,173 @@ func ApplyCustomMigrations(db *gorm.DB) error {
 	// Apply user migration (check if user already exists by username)
 	if err := db.FirstOrCreate(&defaultUser, model.User{Username: defaultUsername}).Error; err != nil {
 		return err
+	}
+
+	groups := []category_model.JobGroup{
+		{
+			ID:      1,
+			TitleRu: "Разработка программного обеспечения",
+			TitleEn: "Software Development",
+		},
+		{
+			ID:      2,
+			TitleRu: "Контроль качества, тестирование",
+			TitleEn: "Quality Assurance",
+		},
+		{
+			ID:      3,
+			TitleRu: "Аналитика данных",
+			TitleEn: "Data Analytics",
+		},
+		{
+			ID:      4,
+			TitleRu: "Управление проектами",
+			TitleEn: "Project Management",
+		},
+	}
+
+	specializations := []category_model.Specialization{
+		{
+			ID:         1,
+			TitleRu:    "Бэкенд разработчик",
+			TitleEn:    "Backend Web Developer",
+			JobGroupID: 1,
+		},
+		{
+			ID:         2,
+			TitleRu:    "Фронтенд разработчик",
+			TitleEn:    "Frontend Web Developer",
+			JobGroupID: 1,
+		},
+		{
+			ID:         3,
+			TitleRu:    "Мобильный разработчик",
+			TitleEn:    "Mobile Developer",
+			JobGroupID: 1,
+		},
+		{
+			ID:         4,
+			TitleRu:    "DevOps инженер",
+			TitleEn:    "DevOps Engineer",
+			JobGroupID: 1,
+		},
+		{
+			ID:         5,
+			TitleRu:    "Инженер по автомат. тестированию",
+			TitleEn:    "Test Automation Engineer",
+			JobGroupID: 2,
+		},
+		{
+			ID:         6,
+			TitleRu:    "Инженер по производительности",
+			TitleEn:    "Software Performance Engineer",
+			JobGroupID: 2,
+		},
+		{
+			ID:         7,
+			TitleRu:    "Ручной тестировщик",
+			TitleEn:    "Manual Tester",
+			JobGroupID: 2,
+		},
+		{
+			ID:         8,
+			TitleRu:    "Дата-аналитик",
+			TitleEn:    "Data Analyst",
+			JobGroupID: 3,
+		},
+		{
+			ID:         9,
+			TitleRu:    "Дата-сайентист",
+			TitleEn:    "Data Scientist",
+			JobGroupID: 3,
+		},
+		{
+			ID:         10,
+			TitleRu:    "Инженер по данным",
+			TitleEn:    "Data Engineer",
+			JobGroupID: 3,
+		},
+		{
+			ID:         11,
+			TitleRu:    "Учёный-исследователь",
+			TitleEn:    "Research Scientist",
+			JobGroupID: 3,
+		},
+		{
+			ID:         12,
+			TitleRu:    "Менеджер проектов",
+			TitleEn:    "Project Manager",
+			JobGroupID: 4,
+		},
+		{
+			ID:         13,
+			TitleRu:    "Менеджер по продуктам",
+			TitleEn:    "Product Manager",
+			JobGroupID: 4,
+		},
+		{
+			ID:         14,
+			TitleRu:    "ТимЛид",
+			TitleEn:    "Team Lead",
+			JobGroupID: 4,
+		},
+	}
+
+	// Predefined Qualifications
+	qualifications := []category_model.Qualification{
+		{
+			ID:      1,
+			TitleRu: "Стажёр",
+			TitleEn: "Intern",
+		},
+		{
+			ID:      2,
+			TitleRu: "Ассистент",
+			TitleEn: "Assistant",
+		},
+		{
+			ID:      3,
+			TitleRu: "Младший специалист",
+			TitleEn: "Junior Specialist",
+		},
+		{
+			ID:      4,
+			TitleRu: "Специалист",
+			TitleEn: "Specialist",
+		},
+		{
+			ID:      5,
+			TitleRu: "Старший специалист",
+			TitleEn: "Senior Specialist",
+		},
+		{
+			ID:      6,
+			TitleRu: "Ведущий специалист",
+			TitleEn: "Lead Specialist",
+		},
+		{
+			ID:      7,
+			TitleRu: "Директор",
+			TitleEn: "Director",
+		},
+	}
+
+	for _, group := range groups {
+		if err := db.FirstOrCreate(&group, category_model.JobGroup{ID: group.ID}).Error; err != nil {
+			return err
+		}
+	}
+
+	for _, specialization := range specializations {
+		if err := db.FirstOrCreate(&specialization, category_model.Specialization{ID: specialization.ID}).Error; err != nil {
+			return err
+		}
+	}
+
+	for _, qualification := range qualifications {
+		if err := db.FirstOrCreate(&qualification, category_model.Qualification{ID: qualification.ID}).Error; err != nil {
+			return err
+		}
 	}
 
 	log.Println("Custom migrations applied successfully.")

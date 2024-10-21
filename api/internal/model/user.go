@@ -1,4 +1,4 @@
-// internal/model/user.go
+// model/user.go
 
 package model
 

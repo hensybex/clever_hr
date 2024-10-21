@@ -1,4 +1,4 @@
-// internal/repository/gpt_call.go
+// repository/gpt_call.go
 
 package repository
 

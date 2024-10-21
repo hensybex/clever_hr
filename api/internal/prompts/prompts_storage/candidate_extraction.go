@@ -1,4 +1,4 @@
-// internal/prompts/prompts_storage/candidate_extraction.go
+// prompts/prompts_storage/candidate_extraction.go
 
 package prompts_storage
 
@@ -45,5 +45,5 @@ Provide BirthDate and TotalYears only if you are absolutely certain that you fou
    - "PreferableJob": The preferable job mentioned or suggested based on resume content
 
 **Respond with the JSON object only.**`,
-	UndefinedJSONOutputs: true,
+	UndefinedJSONOutputs: false,
 }

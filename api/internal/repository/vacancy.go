@@ -1,4 +1,4 @@
-// internal/repository/vacancy.go
+// repository/vacancy.go
 
 package repository
 
@@ -8,7 +8,7 @@ import (
 )
 
 type VacancyRepository interface {
-	Create(vacancy *model.Vacancy) error
+	CreateOne(vacancy *model.Vacancy) error
 	GetByID(id uint) (*model.Vacancy, error)
 	GetAll() ([]model.Vacancy, error)          // New method
 	UpdateStatus(id uint, status string) error // New method
@@ -22,7 +22,7 @@ func NewVacancyRepository(db *gorm.DB) VacancyRepository {
 	return &vacancyRepositoryImpl{db}
 }
 
-func (repo *vacancyRepositoryImpl) Create(vacancy *model.Vacancy) error {
+func (repo *vacancyRepositoryImpl) CreateOne(vacancy *model.Vacancy) error {
 	return repo.db.Create(vacancy).Error
 }
 

@@ -1,4 +1,4 @@
-// internal/prompts/types/types.go
+// prompts/types/types.go
 
 package types
 

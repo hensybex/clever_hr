@@ -1,11 +1,23 @@
+// main.dart
+
 import 'dart:ui';
 
+import 'package:app/providers/match_provider.dart';
+import 'package:app/services/api/auth_service.dart';
+import 'package:app/services/api/match_service.dart';
+import 'package:app/services/api/resume_service.dart';
+import 'package:app/services/api/websocket_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'providers/analytical_widget_provider.dart';
+import 'providers/localization_provider.dart';
+import 'services/api/api_client.dart';
+import 'services/api/vacancy_service.dart';
 import 'services/hive/hive_init.dart';
+import 'utils/constants.dart';
 import 'utils/locales.dart';
 import 'utils/router.dart';
 import 'providers/auth_provider.dart';
@@ -51,12 +63,23 @@ class _MyAppState extends State<MyApp> with AppLocale {
 
   @override
   Widget build(BuildContext context) {
+    final apiClient = ApiClient(apiBaseUrl);
+    final vacancyService = VacancyService(apiClient);
+    final matchService = MatchService(apiClient);
+    final authService = AuthService(apiClient);
+    final resumeService = ResumeService(apiClient);
+    final wsService = WebSocketService(apiClient);
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => VacancyProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider(authService)),
+        ChangeNotifierProvider(create: (_) => LocalizationProvider()),
+        ChangeNotifierProvider(create: (_) => MatchProvider(vacancyService, resumeService, matchService)),
+        ChangeNotifierProvider(
+          create: (_) => VacancyProvider(vacancyService, matchService, wsService),
+        ),
+        ChangeNotifierProvider(create: (_) => AnalyticalWidgetProvider()),
       ],
-      child: const App(),
+      child: App(),
     );
   }
 }

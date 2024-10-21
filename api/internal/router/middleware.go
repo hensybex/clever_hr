@@ -1,4 +1,4 @@
-// internal/router/middleware.go
+// router/middleware.go
 
 package router
 

@@ -1,6 +1,6 @@
+// utils/router.dart
+
 import 'package:go_router/go_router.dart';
-import '../models/vacancy_model.dart';
-import '../models/vacancy_resume_match_model.dart';
 import '../screens/login_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/create_vacancy_screen.dart';
@@ -21,17 +21,17 @@ final routes = [
     builder: (context, state) => const CreateVacancyScreen(),
   ),
   GoRoute(
-    path: RouteNames.vacancy,
+    path: '${RouteNames.vacancy}/:id',
     builder: (context, state) {
-      final vacancy = state.extra as VacancyModel;
-      return VacancyScreen(vacancy: vacancy);
+      final id = int.parse(state.pathParameters['id']!);
+      return VacancyScreen(vacancyId: id);
     },
   ),
   GoRoute(
-    path: RouteNames.vacancyResumeMatch,
+    path: '${RouteNames.vacancyResumeMatch}/:matchId',
     builder: (context, state) {
-      final resumeMatch = state.extra as VacancyResumeMatchModel;
-      return VacancyResumeMatchScreen(resumeMatch: resumeMatch);
+      final matchId = int.parse(state.pathParameters['matchId']!);
+      return VacancyResumeMatchScreen(matchId: matchId);
     },
   ),
 ];

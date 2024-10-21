@@ -1,4 +1,4 @@
-// internal/prompts/prompts_storage/resume_analysis.go
+// prompts/prompts_storage/resume_analysis.go
 
 package prompts_storage
 
@@ -102,7 +102,7 @@ var ResumeAnalysisPrompt = types.Prompt{
            "Score": "integer"
        }
    }
-The "Score" for each category should be a number between 1 and 10, where 1 indicates the lowest proficiency or suitability, and 10 indicates the highest.
+The "Score" for each category should be a number between 1 and 10, where 1 indicates the lowest proficiency or suitability, and 10 indicates the highest. Remember that Overviews should be written in Russian language.
 Respond with the JSON object only.
 `,
 	UndefinedJSONOutputs: false,

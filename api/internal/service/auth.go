@@ -1,4 +1,4 @@
-// internal/service/auth.go
+// service/auth.go
 
 package service
 

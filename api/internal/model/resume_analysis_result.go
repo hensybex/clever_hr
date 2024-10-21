@@ -1,4 +1,4 @@
-// internal/model/resume_analysis_result.go
+// model/resume_analysis_result.go
 
 package model
 

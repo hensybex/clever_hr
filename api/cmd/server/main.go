@@ -6,6 +6,7 @@ import (
 	"clever_hr_api/internal/config"
 	"clever_hr_api/internal/migration"
 	"clever_hr_api/internal/model"
+	category_model "clever_hr_api/internal/model/categories"
 	"clever_hr_api/internal/router"
 	"log"
 
@@ -24,17 +25,26 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 
+	milvusClient := config.InitMilvusClient()
+	defer milvusClient.Close()
+
+	if err := model.CreateMilvusCollections(milvusClient); err != nil {
+		log.Fatalf("Failed to create Milvus collections: %v", err)
+	}
+
 	// AutoMigrate models
 	if err := db.AutoMigrate(
 		&model.GPTCall{},
 		&model.User{},
-		&model.Candidate{},
 		&model.Resume{},
+		//&model.ResumeEmbedding{},
+		&model.Vacancy{},
+		//&model.VacancyEmbedding{},
 		&model.ResumeAnalysisResult{},
-		&model.InterviewType{},
-		&model.Interview{},
-		&model.InterviewMessage{},
-		&model.InterviewAnalysisResult{},
+		&model.VacancyResumeMatch{},
+		&category_model.JobGroup{},
+		&category_model.Qualification{},
+		&category_model.Specialization{},
 	); err != nil {
 		log.Fatalf("Failed to automigrate: %v", err)
 	}
@@ -45,7 +55,7 @@ func main() {
 	}
 
 	// Setup router
-	r := router.SetupRouter(db)
+	r := router.SetupRouter(db, milvusClient)
 
 	// Start server
 	if err := r.Run(":8080"); err != nil {
