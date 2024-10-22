@@ -21,7 +21,7 @@ func SetupRouter(db *gorm.DB, milvusClient client.Client) *gin.Engine {
 
 	// Apply CORS middleware
 	r.Use(cors.New(cors.Config{
-		AllowAllOrigins:  true,
+		AllowAllOrigins:  true, // This line allows all origins
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},

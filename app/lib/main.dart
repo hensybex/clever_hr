@@ -21,9 +21,12 @@ import 'utils/locales.dart';
 import 'utils/router.dart';
 import 'providers/auth_provider.dart';
 import 'providers/vacancy_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "assets/.env");
+  logApiBaseUrl();
+
   await HiveInitializer.instance.initHive();
   runApp(const MyApp());
 }
@@ -52,7 +55,7 @@ class _MyAppState extends State<MyApp> with AppLocale {
   }
   @override
   Widget build(BuildContext context) {
-    final apiClient = ApiClient(apiBaseUrl);
+final apiClient = ApiClient(apiBaseUrl);
     final vacancyService = VacancyService(apiClient);
     final matchService = MatchService(apiClient);
     final authService = AuthService(apiClient);
