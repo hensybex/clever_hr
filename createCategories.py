@@ -8,7 +8,7 @@ import time
 # Connect to Milvus
 connections.connect(
     alias="default",
-    host="localhost",  # Replace with your Milvus host if different
+    host="localhost",
     port="19530"
 )
 

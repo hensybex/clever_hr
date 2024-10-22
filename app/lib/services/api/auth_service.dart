@@ -44,7 +44,6 @@ class AuthService {
     };
 
     // Log before sending the request
-    print('Attempting to login with username: $username');
 
     // Send POST request to the login endpoint (no authentication needed)
     final http.Response response = await apiClient.post(
@@ -59,7 +58,6 @@ class AuthService {
       final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
 
       // Log successful login
-      print('Login successful. Token received.');
 
       // Assuming your API returns 'token' and 'expire' fields
       final String token = jsonResponse['token'];
@@ -76,13 +74,10 @@ class AuthService {
       };
     } else {
       // Log the error response
-      print('Login failed with status code: ${response.statusCode}');
-      print('Response body: ${response.body}');
       throw Exception('Failed to login');
     }
   } catch (e) {
     // Log the exception details
-    print('Exception during login: $e');
     throw Exception('Login failed');
   }
 }

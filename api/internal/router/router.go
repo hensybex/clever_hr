@@ -39,6 +39,7 @@ func SetupRouter(db *gorm.DB, milvusClient client.Client) *gin.Engine {
 	qualificationRepo := repository.NewQualificationRepository(db)
 	vacancyResumeMatchRepo := repository.NewVacancyResumeMatchRepository(db)
 	embeddingRepo := repository.NewEmbeddingRepository(milvusClient)
+	messageRepo := repository.NewMessageRepository(db)
 
 	// Initialize services
 	mistralService := mistral.NewMistralService(gptCallRepo)
@@ -60,6 +61,7 @@ func SetupRouter(db *gorm.DB, milvusClient client.Client) *gin.Engine {
 	matchUsecase := usecase.NewMatchUsecase(embeddingRepo, vacancyResumeMatchRepo, vacancyRepo, resumeRepo, *mistralService)
 	vacancyUsecase := usecase.NewVacancyUsecase(vacancyRepo, embeddingRepo, jobGroupRepo, specializationRepo, qualificationRepo, *mistralService, matchUsecase)
 	//embeddingUsecase := usecase.NewEmbeddingUsecase(embeddingRepo)
+	messageUsecase := usecase.NewMessageUsecase(messageRepo)
 
 	// Initialize handlers
 	userHandler := handlers.NewUserHandler(userUsecase)
@@ -67,11 +69,15 @@ func SetupRouter(db *gorm.DB, milvusClient client.Client) *gin.Engine {
 	vacancyHandler := handlers.NewVacancyHandler(vacancyUsecase)
 	matchHandler := handlers.NewMatchHandler(matchUsecase)
 	authHandler := handlers.NewAuthHandler(authService)
+	messageHandler := handlers.NewMessageHandler(messageUsecase)
+	llmHandler := handlers.NewLLMHandler(messageUsecase, vacancyResumeMatchRepo, mistralService)
 	//embeddingHandler := handlers.NewEmbeddingHandler(embeddingUsecase)
 
 	// Public routes (no auth needed)
 	r.POST("/login", authMiddleware.LoginHandler)
 	r.POST("/logout", authHandler.Logout)
+	r.POST("/llm/generate_interview_answer", llmHandler.GenerateInterviewAnswer)
+	r.POST("/llm/generate_interview_start", llmHandler.GenerateFirstMessage)
 
 	// Define API routes
 	api := r.Group("/api")
@@ -117,6 +123,9 @@ func SetupRouter(db *gorm.DB, milvusClient client.Client) *gin.Engine {
 		// One-time routes for updating embeddings (After DB switch)
 		api.POST("/resumes/update-embeddings", resumeHandler.UpdateAllResumeEmbeddings)
 		api.POST("/vacancies/update-embeddings", vacancyHandler.UpdateAllVacancyEmbeddings)
+
+		// Messages route
+		api.GET("/messages/get_by_tg_login/:tg_login", messageHandler.GetMessagesByTgLogin)
 	}
 
 	return r

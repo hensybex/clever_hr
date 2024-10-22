@@ -68,7 +68,7 @@ class VacancyResumeMatchScreenState extends State<VacancyResumeMatchScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ResumeWidget(resume: resume),
+                    ResumeWidget(resume: resume, matchID: resumeMatch.id,),
                     const SizedBox(height: 20),
                     _buildAnalyticalWidgetRows(context, resumeMatch),
                   ],

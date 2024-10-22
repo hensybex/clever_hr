@@ -8,8 +8,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../providers/vacancy_provider.dart';
 import '../models/vacancy.dart';
+
 class CreateVacancyScreen extends StatefulWidget {
-  const CreateVacancyScreen({Key? key}) : super(key: key);
+  const CreateVacancyScreen({super.key});
   @override
   CreateVacancyScreenState createState() => CreateVacancyScreenState();
 }

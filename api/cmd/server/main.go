@@ -45,6 +45,7 @@ func main() {
 		&category_model.JobGroup{},
 		&category_model.Qualification{},
 		&category_model.Specialization{},
+		&model.Message{},
 	); err != nil {
 		log.Fatalf("Failed to automigrate: %v", err)
 	}

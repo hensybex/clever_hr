@@ -1,4 +1,4 @@
-version: '3'
+# docker-compose.dev.yml
 
 services:
   db:
@@ -102,14 +102,6 @@ services:
     networks:
       - app-network
 
-  flutter-web:
-    build:
-      context: ./app  # Путь к директории Flutter приложения
-      dockerfile: Dockerfile
-    ports:
-      - "8896:80"  # Порт фронтенда
-    networks:
-      - app-network
 networks:
   app-network:
     driver: bridge

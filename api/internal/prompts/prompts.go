@@ -22,6 +22,8 @@ type Prompts struct {
 	ResumeVacancyAnalysisPrompt          types.Prompt
 	ResumeStandardizationPrompt          types.Prompt
 	VacancyStandardizationPrompt         types.Prompt
+	InterviewMessagePrompt               types.Prompt
+	FirstMessagePrompt                   types.Prompt
 }
 
 // NewPrompts initializes and returns a Prompts struct with all predefined prompts
@@ -40,5 +42,7 @@ func NewPrompts() *Prompts {
 		ResumeVacancyAnalysisPrompt:          prompts_storage.ResumeVacancyAnalysisPrompt,
 		ResumeStandardizationPrompt:          prompts_storage.ResumeStandardizationPrompt,
 		VacancyStandardizationPrompt:         prompts_storage.VacancyStandardizationPrompt,
+		InterviewMessagePrompt:               prompts_storage.InterviewMessagePrompt,
+		FirstMessagePrompt:                   prompts_storage.FirstMessagePrompt,
 	}
 }

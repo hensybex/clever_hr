@@ -51,19 +51,9 @@ class ApiClient {
     final headers = await _getHeaders(needsAuth: needsAuth);
     final url = _constructUrl(path, isAuthEndpoint: isAuthEndpoint);
 
-    // Log the request details
-    print('--- POST Request ---');
-    print('URL: $url');
-    print('Headers: $headers');
-    print('Body: ${jsonEncode(body)}');
 
     final response = await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
 
-    // Log the response details
-    print('--- Response ---');
-    print('Status Code: ${response.statusCode}');
-    print('Headers: ${response.headers}');
-    print('Body: ${response.body}');
 
     return response;
   }
