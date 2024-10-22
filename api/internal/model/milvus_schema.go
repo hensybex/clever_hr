@@ -4,13 +4,13 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
 	"github.com/milvus-io/milvus-sdk-go/v2/entity"
 )
 
-// CreateResumeCollection creates the Milvus collection schema for resume embeddings.
 func CreateResumeCollection(milvusClient client.Client) error {
 	ctx := context.Background()
 
@@ -54,6 +54,28 @@ func CreateResumeCollection(milvusClient client.Client) error {
 	}
 
 	log.Println("Resume collection created successfully")
+
+	// Create index on the 'embedding' field
+	index, err := entity.NewIndexIvfFlat(entity.L2, 1024)
+	if err != nil {
+		return fmt.Errorf("failed to create index params: %w", err)
+	}
+
+	err = milvusClient.CreateIndex(ctx, "resumes", "embedding", index, false)
+	if err != nil {
+		return fmt.Errorf("failed to create index on 'resumes' collection: %w", err)
+	}
+
+	log.Println("Index created successfully on 'resumes' collection")
+
+	// Load the collection into memory
+	err = milvusClient.LoadCollection(ctx, "resumes", false)
+	if err != nil {
+		return fmt.Errorf("failed to load 'resumes' collection: %w", err)
+	}
+
+	log.Println("'resumes' collection loaded into memory")
+
 	return nil
 }
 
@@ -101,6 +123,28 @@ func CreateVacancyCollection(milvusClient client.Client) error {
 	}
 
 	log.Println("Vacancy collection created successfully")
+
+	// Create index on the 'embedding' field
+	index, err := entity.NewIndexIvfFlat(entity.L2, 1024)
+	if err != nil {
+		return fmt.Errorf("failed to create index params: %w", err)
+	}
+
+	err = milvusClient.CreateIndex(ctx, "vacancies", "embedding", index, false)
+	if err != nil {
+		return fmt.Errorf("failed to create index on 'vacancies' collection: %w", err)
+	}
+
+	log.Println("Index created successfully on 'vacancies' collection")
+
+	// Load the collection into memory
+	err = milvusClient.LoadCollection(ctx, "vacancies", false)
+	if err != nil {
+		return fmt.Errorf("failed to load 'vacancies' collection: %w", err)
+	}
+
+	log.Println("'vacancies' collection loaded into memory")
+
 	return nil
 }
 

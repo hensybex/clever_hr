@@ -12,7 +12,7 @@ trap cleanup SIGINT
 echo "Rebuilding and restarting API service..."
 
 # Bring up the db service to ensure the network is created
-sudo docker-compose -p app -f docker-compose.yml -f docker-compose.dev.yml up -d db
+docker-compose -p app -f docker-compose.yml -f docker-compose.dev.yml up -d db
 
 echo "---1---"
 

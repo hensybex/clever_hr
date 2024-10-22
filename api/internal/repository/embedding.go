@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/milvus-io/milvus-sdk-go/v2/client"
 	"github.com/milvus-io/milvus-sdk-go/v2/entity"
@@ -33,19 +34,53 @@ func NewEmbeddingRepository(milvusClient client.Client) EmbeddingRepository {
 }
 
 func (repo *embeddingRepositoryImpl) CreateResumeEmbedding(resumeID uint, embedding []float32) error {
-	ctx := context.Background()
+	// Set a timeout for the entire operation
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+
+	// Log the start of the function
+	log.Printf("Starting CreateResumeEmbedding for resumeID: %d", resumeID)
+	log.Printf("Embedding vector (first 10 elements): %v", embedding[:10])
+
+	// Ensure the collection is loaded
+	log.Println("Ensuring 'resumes' collection is loaded into memory...")
+	err := repo.milvusClient.LoadCollection(ctx, "resumes", false)
+	if err != nil {
+		log.Printf("Error loading collection 'resumes': %v", err)
+		return fmt.Errorf("failed to load collection 'resumes': %w", err)
+	}
+
+	// Create Milvus columns
 	idColumn := entity.NewColumnInt64("resume_id", []int64{int64(resumeID)})
 	embeddingColumn := entity.NewColumnFloatVector("embedding", 1024, [][]float32{embedding})
 
-	_, err := repo.milvusClient.Insert(ctx, "resumes", "", idColumn, embeddingColumn)
+	log.Println("Inserting data into the Milvus 'resumes' collection...")
+
+	// Insert the data
+	_, err = repo.milvusClient.Insert(ctx, "resumes", "", idColumn, embeddingColumn)
 	if err != nil {
+		log.Printf("Error during insertion: %v", err)
 		return fmt.Errorf("failed to insert resume embedding: %w", err)
 	}
 
-	// Flush to ensure data is persisted
-	if err := repo.milvusClient.Flush(ctx, "resumes", false); err != nil {
+	log.Println("Data inserted successfully. Flushing the 'resumes' collection...")
+
+	// Flush the data to ensure it's persisted
+	flushCtx, flushCancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer flushCancel()
+
+	log.Println("Flushing data with a timeout context...")
+
+	err = repo.milvusClient.Flush(flushCtx, "resumes", false)
+	if err != nil {
+		log.Printf("Error during flush: %v", err)
 		return fmt.Errorf("failed to flush resumes collection: %w", err)
 	}
+
+	log.Println("Flush completed successfully for the 'resumes' collection.")
+
+	// Log the successful end of the function
+	log.Printf("Successfully created resume embedding for resumeID: %d", resumeID)
 
 	return nil
 }

@@ -4,8 +4,11 @@ package handlers
 
 import (
 	//"log"
+	"fmt"
+	"io"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"strconv"
 
@@ -92,6 +95,98 @@ func (h *ResumeHandler) UploadResume(c *gin.Context) {
 	// Prepare the resume object to be saved
 	resume := model.Resume{
 		UploadedFrom: uploadedFrom,
+		PDFPath:      filePath,
+	}
+
+	// Call the usecase to process and save the resume
+	if err := h.resumeUsecase.UploadResume(&resume, filePath); err != nil {
+		log.Printf("Error: Failed to upload resume")
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to process resume"})
+		return
+	}
+	log.Printf("Resume processed and saved successfully")
+
+	// Success case
+	c.JSON(http.StatusOK, gin.H{"message": "Resume uploaded successfully"})
+	log.Println("Resume upload completed successfully")
+}
+
+func (h *ResumeHandler) UploadResumeNew(c *gin.Context) {
+	// Log that the request has been received
+	log.Println("Received request to upload resume from employee")
+
+	// Parse JSON body into ResumeJSON struct
+	var payload struct {
+		ID string `json:"id"`
+	}
+
+	// Parse the JSON body into the partial struct
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		log.Println("Error: Failed to parse JSON data")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid JSON data"})
+		return
+	}
+
+	// Check if the ID field is present
+	if payload.ID == "" {
+		log.Println("Error: ID is missing from the JSON data")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID is required"})
+		return
+	}
+	resumeID := payload.ID
+	log.Printf("Extracted resume ID: %s", resumeID)
+
+	// Call the colleague's endpoint to download the resume PDF file
+	log.Printf("-------------------------------------------------------LOG--------------------------------------------------------------------")
+	downloadURL := fmt.Sprintf("https://hh.valiev.xyz/resume/download/%s", resumeID)
+	log.Printf("Formulated string URL: %s", downloadURL)
+	log.Printf("Downloading resume PDF from URL: %s", downloadURL)
+
+	// Perform the GET request to download the PDF
+	// Perform the GET request to download the PDF
+	resp, err := http.Get(downloadURL)
+	if err != nil {
+		log.Printf("Error: Failed to download resume PDF from %s, error: %v", downloadURL, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to download resume PDF"})
+		return
+	}
+
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("Error: Failed to download resume PDF, status code: %d", resp.StatusCode)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to download resume PDF"})
+		return
+	}
+
+	// Generate a unique file name using UUID and .pdf extension
+	uniqueFileName := uuid.New().String() + ".pdf"
+	log.Printf("Generated unique file name: %s", uniqueFileName)
+
+	// Save the PDF data to a file locally (e.g., in the /app/uploads directory)
+	filePath := "/app/uploads/" + uniqueFileName
+
+	// Create and open the local file
+	outFile, err := os.Create(filePath)
+	if err != nil {
+		log.Printf("Error: Failed to create file %s", filePath)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save resume PDF file"})
+		return
+	}
+	defer outFile.Close()
+
+	// Copy the data from the response body to the file
+	_, err = io.Copy(outFile, resp.Body)
+	if err != nil {
+		log.Printf("Error: Failed to write PDF data to file %s", filePath)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save resume PDF file"})
+		return
+	}
+	log.Printf("File saved successfully at: %s", filePath)
+
+	// Prepare the resume object to be saved
+	resume := model.Resume{
+		UploadedFrom: "Danya-3",
 		PDFPath:      filePath,
 	}
 

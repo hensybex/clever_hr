@@ -75,6 +75,8 @@ func SetupRouter(db *gorm.DB, milvusClient client.Client) *gin.Engine {
 
 	// Define API routes
 	api := r.Group("/api")
+
+	api.POST("/resumes/upload_new", resumeHandler.UploadResumeNew)
 	// Update the API routes to be more specific
 	//api.GET("/embeddings/resume/:resume_id/embedding", embeddingHandler.GetResumeEmbedding)
 	//api.GET("/embeddings/vacancy/:vacancy_id/embedding", embeddingHandler.GetVacancyEmbedding)

@@ -289,7 +289,7 @@ func (u *resumeUsecase) UploadResume(resume *model.Resume, filePath string) erro
 	if err != nil {
 		fmt.Printf("Failed to generate embedding: %v\n", err)
 	} else {
-		fmt.Println("Generated embedding:", embedding)
+		fmt.Println("Generated embedding:")
 	}
 
 	// Convert the []float64 embedding to []float32
@@ -298,11 +298,15 @@ func (u *resumeUsecase) UploadResume(resume *model.Resume, filePath string) erro
 		embeddingFloat32[i] = float32(v)
 	}
 
+	fmt.Println("Generated embedding float32", embeddingFloat32)
+
 	// Save the embedding as a []float32
 	resumeEmbedding := &model.ResumeEmbedding{
 		ResumeID:  resume.ID,
 		Embedding: embeddingFloat32, // Store the []float32 directly
 	}
+
+	fmt.Println("Generated embedding resume", resumeEmbedding)
 
 	// Pass both resumeID and embedding to the repository
 	if err := u.embeddingRepo.CreateResumeEmbedding(resumeEmbedding.ResumeID, resumeEmbedding.Embedding); err != nil {
